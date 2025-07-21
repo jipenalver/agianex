@@ -12,7 +12,7 @@ import NotFoundView from '@/views/errors/NotFoundView.vue'
 // import LeaveView from '@/views/system/admin/manage-attendance/LeaveView.vue'
 // import OvertimeView from '@/views/system/admin/manage-attendance/OvertimeView.vue'
 // import PayrollView from '@/views/system/admin/manage-payroll/PayrollView.vue'
-// import SettingsView from '@/views/system/settings/SettingsView.vue'
+import SettingsView from '@/views/system/settings/SettingsView.vue'
 
 export const routes = [
   // Landing
@@ -38,12 +38,12 @@ export const routes = [
   },
 
   // System
-  {
-    path: '/dashboard',
-    name: 'dashboard',
-    component: DashboardView,
-    meta: { requiresAuth: true, isDefault: true },
-  },
+  // {
+  //   path: '/dashboard',
+  //   name: 'dashboard',
+  //   component: DashboardView,
+  //   meta: { requiresAuth: true, isDefault: true },
+  // },
   {
     path: '/settings/:tab?',
     name: 'settings',
@@ -51,19 +51,19 @@ export const routes = [
     meta: { requiresAuth: true, isDefault: true },
   },
 
-  // Users
-  {
-    path: '/admin/users/roles',
-    name: 'admin-users-roles',
-    component: UserRolesView,
-    meta: { requiresAuth: true },
-  },
-  {
-    path: '/admin/users/list',
-    name: 'admin-users-list',
-    component: UsersView,
-    meta: { requiresAuth: true },
-  },
+  // // Users
+  // {
+  //   path: '/admin/users/roles',
+  //   name: 'admin-users-roles',
+  //   component: UserRolesView,
+  //   meta: { requiresAuth: true },
+  // },
+  // {
+  //   path: '/admin/users/list',
+  //   name: 'admin-users-list',
+  //   component: UsersView,
+  //   meta: { requiresAuth: true },
+  // },
 
   // Errors Pages
   {
