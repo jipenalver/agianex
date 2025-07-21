@@ -44,7 +44,13 @@ onMounted(async () => {
 
         <v-app-bar-title>
           <RouterLink class="text-decoration-none" to="/">
-            <h1 v-if="smAndUp" class="text-h4 font-weight-black text-primary">AGIANEX</h1>
+            <h1
+              v-if="smAndUp"
+              class="text-h4 font-weight-black"
+              :class="{ 'text-primary': theme === 'light', 'text-white': theme === 'dark' }"
+            >
+              AGIANEX
+            </h1>
             <v-img v-else max-width="75" :src="LogoAgianex"></v-img>
           </RouterLink>
         </v-app-bar-title>
