@@ -2,14 +2,14 @@
 import { formActionDefault } from '@/utils/helpers/constants'
 import AppAlert from '@/components/common/AppAlert.vue'
 import { getAvatarText } from '@/utils/helpers/others'
-// import { useAuthUserStore } from '@/stores/authUser'
+import { useAuthUserStore } from '@/stores/authUser'
 import { supabase } from '@/utils/supabase'
 import { useRouter } from 'vue-router'
 import { ref } from 'vue'
 
 const router = useRouter()
 
-// const authUserStore = useAuthUserStore()
+const authUserStore = useAuthUserStore()
 
 const formAction = ref({ ...formActionDefault })
 
@@ -18,9 +18,9 @@ const onLogout = async () => {
 
   await supabase.auth.signOut()
 
-  // setTimeout(() => {
-  //   authUserStore.$reset()
-  // }, 2500)
+  setTimeout(() => {
+    authUserStore.$reset()
+  }, 2500)
 
   formAction.value = {
     ...formActionDefault,
