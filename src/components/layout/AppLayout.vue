@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import TopProfileNavigation from '@/components/navigation/TopProfileNavigation.vue'
-import logoAgianex from '@/assets/logos/logo-agianex-v1.png'
+import LogoAgianex from '@/assets/logos/logo-agianex-v1.png'
 import imageBg from '@/assets/images/img-bxu-hall.jpg'
 import { useAuthUserStore } from '@/stores/authUser'
 import { onMounted, ref } from 'vue'
@@ -45,7 +45,7 @@ onMounted(async () => {
         <v-app-bar-title>
           <RouterLink to="/">
             <h1 v-if="smAndUp" class="text-h3">AGIANEX</h1>
-            <v-img v-else max-width="75" :src="logoAgianex"></v-img>
+            <v-img v-else max-width="75" :src="LogoAgianex"></v-img>
           </RouterLink>
         </v-app-bar-title>
 
