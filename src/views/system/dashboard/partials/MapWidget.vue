@@ -4,7 +4,7 @@
 </script>
 
 <template>
-  <v-card title="Current Location">
+  <v-card class="border-md border-solid border-opacity-100 border-primary" title="Citizen Report">
     <template #subtitle>
       <!-- <div class="text-wrap">
         {{ `LatLng: ${coords.latitude}, ${coords.longitude}` }} <br />

@@ -31,9 +31,7 @@ import AppLayout from '@/components/layout/AppLayout.vue'
               </v-btn>
             </div>
           </v-col>
-        </v-row>
-
-        <v-row> </v-row> -->
+        </v-row> -->
       </v-container>
     </template>
   </AppLayout>
