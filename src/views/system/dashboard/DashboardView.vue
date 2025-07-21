@@ -20,13 +20,19 @@ const isDrawerVisible = ref(xs.value ? false : true)
     <template #content>
       <v-container fluid>
         <v-row>
-          <v-col cols="12" lg="12">
-            <WelcomeWidget></WelcomeWidget>
+          <v-col cols="12" lg="9">
+            <v-row>
+              <v-col cols="12">
+                <WelcomeWidget></WelcomeWidget>
+              </v-col>
+
+              <v-col cols="12">
+                <MapWidget></MapWidget>
+              </v-col>
+            </v-row>
           </v-col>
 
-          <v-col cols="12">
-            <MapWidget></MapWidget>
-          </v-col>
+          <v-col cols="12" lg="3"> </v-col>
         </v-row>
       </v-container>
     </template>
