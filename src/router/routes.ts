@@ -1,5 +1,6 @@
-// import LoginView from '@/views/auth/LoginView.vue'
-// import RegisterView from '@/views/auth/register/RegisterView.vue'
+import HomeView from '@/views/landing/HomeView.vue'
+import LoginView from '@/views/auth/LoginView.vue'
+import RegisterView from '@/views/auth/RegisterView.vue'
 import ForbiddenView from '@/views/errors/ForbiddenView.vue'
 import NotFoundView from '@/views/errors/NotFoundView.vue'
 // import UserRolesView from '@/views/system/admin/manage-users/UserRolesView.vue'
@@ -14,89 +15,55 @@ import NotFoundView from '@/views/errors/NotFoundView.vue'
 // import SettingsView from '@/views/system/settings/SettingsView.vue'
 
 export const routes = [
-  // // Landing
-  // {
-  //   path: '/',
-  //   name: 'home',
-  //   component: LoginView,
-  //   meta: { requiresAuth: false },
-  // },
-  // // {
-  // //   path: '/register',
-  // //   name: 'register',
-  // //   component: RegisterView,
-  // //   meta: { requiresAuth: false },
-  // // },
+  // Landing
+  {
+    path: '/',
+    name: 'home',
+    component: HomeView,
+    meta: { requiresAuth: false },
+  },
 
-  // // System
-  // {
-  //   path: '/dashboard',
-  //   name: 'dashboard',
-  //   component: DashboardView,
-  //   meta: { requiresAuth: true, isDefault: true },
-  // },
-  // {
-  //   path: '/settings/:tab?',
-  //   name: 'settings',
-  //   component: SettingsView,
-  //   meta: { requiresAuth: true, isDefault: true },
-  // },
+  // Auth
+  {
+    path: '/login',
+    name: 'login',
+    component: LoginView,
+    meta: { requiresAuth: false },
+  },
+  {
+    path: '/register',
+    name: 'register',
+    component: RegisterView,
+    meta: { requiresAuth: false },
+  },
 
-  // // Users
-  // {
-  //   path: '/admin/users/roles',
-  //   name: 'admin-users-roles',
-  //   component: UserRolesView,
-  //   meta: { requiresAuth: true },
-  // },
-  // {
-  //   path: '/admin/users/list',
-  //   name: 'admin-users-list',
-  //   component: UsersView,
-  //   meta: { requiresAuth: true },
-  // },
+  // System
+  {
+    path: '/dashboard',
+    name: 'dashboard',
+    component: DashboardView,
+    meta: { requiresAuth: true, isDefault: true },
+  },
+  {
+    path: '/settings/:tab?',
+    name: 'settings',
+    component: SettingsView,
+    meta: { requiresAuth: true, isDefault: true },
+  },
 
-  // // Employees
-  // {
-  //   path: '/hrms/employees/list',
-  //   name: 'hrms-employees-list',
-  //   component: EmployeesView,
-  //   meta: { requiresAuth: true },
-  // },
-  // {
-  //   path: '/hrms/employees/benefits',
-  //   name: 'hrms-employees-benefits',
-  //   component: RatesBenefitsView,
-  //   meta: { requiresAuth: true },
-  // },
-
-  // // Attendance
-  // {
-  //   path: '/hrms/attendance/list',
-  //   name: 'hrms-attendance-list',
-  //   component: AttendanceView,
-  //   meta: { requiresAuth: true },
-  // },
-  // {
-  //   path: '/hrms/attendance/leave',
-  //   name: 'hrms-attendance-leave',
-  //   component: LeaveView,
-  //   meta: { requiresAuth: true },
-  // },
-  // {
-  //   path: '/hrms/attendance/overtime',
-  //   name: 'hrms-attendance-overtime',
-  //   component: OvertimeView,
-  //   meta: { requiresAuth: true },
-  // },
-
-  // // Payroll
-  // {
-  //   path: '/hrms/payroll/list',
-  //   name: 'hrms-payroll-list',
-  //   component: PayrollView,
-  //   meta: { requiresAuth: true },
-  // },
+  // Users
+  {
+    path: '/admin/users/roles',
+    name: 'admin-users-roles',
+    component: UserRolesView,
+    meta: { requiresAuth: true },
+  },
+  {
+    path: '/admin/users/list',
+    name: 'admin-users-list',
+    component: UsersView,
+    meta: { requiresAuth: true },
+  },
 
   // Errors Pages
   {
