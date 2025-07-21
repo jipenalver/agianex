@@ -2,6 +2,7 @@
 import TopProfileNavigation from '@/components/navigation/TopProfileNavigation.vue'
 import headerCzarles from '@/assets/images/image-header-title.png'
 import logoCzarles from '@/assets/logos/logo-czarles.png'
+import { useAuthUserStore } from '@/stores/authUser'
 import imageBg from '@/assets/images/image-bg.jpg'
 import { onMounted, ref } from 'vue'
 import { useDisplay } from 'vuetify'
@@ -14,7 +15,7 @@ const emit = defineEmits(['isDrawerVisible', 'theme'])
 
 const { mobile, smAndUp } = useDisplay()
 
-// const authUserStore = useAuthUserStore()
+const authUserStore = useAuthUserStore()
 
 const isLoggedIn = ref(false)
 const theme = ref(localStorage.getItem('theme') ?? 'light')
@@ -26,8 +27,7 @@ function onToggleTheme() {
 }
 
 onMounted(async () => {
-  // isLoggedIn.value = await authUserStore.isAuthenticated()
-  isLoggedIn.value = false
+  isLoggedIn.value = await authUserStore.isAuthenticated()
 })
 </script>
 
