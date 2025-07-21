@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import SideNavigation from '@/components/navigation/SideNavigation.vue'
-import LogoBdTransparent from '@/assets/logos/logo-czarles.png'
+import LogoAgianex from '@/assets/logos/logo-agianex-v1.png'
 import AppLayout from '@/components/layout/AppLayout.vue'
 import { useAuthUserStore } from '@/stores/authUser'
 import { onMounted, ref } from 'vue'
@@ -37,7 +37,7 @@ onMounted(async () => {
       <v-container>
         <v-row>
           <v-col class="mx-auto mt-16 text-center" cols="12" xl="4" lg="5">
-            <v-empty-state :image="LogoBdTransparent">
+            <v-empty-state :image="LogoAgianex">
               <template #headline>
                 <h1 class="text-h1 font-weight-black text-primary">{{ props.headline }}</h1>
               </template>
