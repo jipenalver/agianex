@@ -33,7 +33,7 @@ onMounted(async () => {
 <template>
   <v-responsive>
     <v-app :theme="theme">
-      <v-app-bar class="px-3">
+      <v-app-bar class="px-3 border-b-md border-solid border-opacity-100 border-primary">
         <v-app-bar-nav-icon
           v-if="props.isWithAppBarIcon"
           icon="mdi-menu"
@@ -44,7 +44,7 @@ onMounted(async () => {
 
         <v-app-bar-title>
           <RouterLink class="text-decoration-none" to="/">
-            <h1 v-if="smAndUp" class="text-h4 font-weight-black">AGIANEX</h1>
+            <h1 v-if="smAndUp" class="text-h4 font-weight-black text-primary">AGIANEX</h1>
             <v-img v-else max-width="75" :src="LogoAgianex"></v-img>
           </RouterLink>
         </v-app-bar-title>
@@ -92,7 +92,11 @@ onMounted(async () => {
         </v-img>
       </v-main>
 
-      <v-footer class="d-flex" :class="mobile ? 'justify-center' : 'justify-between'" border app>
+      <v-footer
+        class="d-flex border-t-md border-solid border-opacity-100 border-primary"
+        :class="mobile ? 'justify-center' : 'justify-between'"
+        app
+      >
         <div class="font-weight-bold text-center">Copyright © 2025 | Agianex</div>
       </v-footer>
     </v-app>
