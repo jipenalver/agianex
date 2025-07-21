@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import SideNavigation from '@/components/navigation/SideNavigation.vue'
-import LogoAgianex from '@/assets/logos/logo-agianex-v1.png'
+import LogoAgianex from '@/assets/logos/logo-agianex-v2.png'
 import AppLayout from '@/components/layout/AppLayout.vue'
 import { useAuthUserStore } from '@/stores/authUser'
 import { onMounted, ref } from 'vue'
