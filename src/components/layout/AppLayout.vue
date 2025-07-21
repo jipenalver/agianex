@@ -1,9 +1,8 @@
 <script setup lang="ts">
 import TopProfileNavigation from '@/components/navigation/TopProfileNavigation.vue'
-import headerCzarles from '@/assets/images/image-header-title.png'
-import logoCzarles from '@/assets/logos/logo-czarles.png'
+import logoAgianex from '@/assets/logos/logo-agianex-v1.png'
+import imageBg from '@/assets/images/img-bxu-hall.jpg'
 import { useAuthUserStore } from '@/stores/authUser'
-import imageBg from '@/assets/images/image-bg.jpg'
 import { onMounted, ref } from 'vue'
 import { useDisplay } from 'vuetify'
 
@@ -45,8 +44,8 @@ onMounted(async () => {
 
         <v-app-bar-title>
           <RouterLink to="/">
-            <v-img v-if="theme === 'light' && smAndUp" max-width="265" :src="headerCzarles"></v-img>
-            <v-img v-else max-width="75" :src="logoCzarles"></v-img>
+            <h1 v-if="smAndUp" class="text-h3">AGIANEX</h1>
+            <v-img v-else max-width="75" :src="logoAgianex"></v-img>
           </RouterLink>
         </v-app-bar-title>
 
@@ -60,6 +59,28 @@ onMounted(async () => {
 
         <template v-if="isLoggedIn">
           <TopProfileNavigation></TopProfileNavigation>
+        </template>
+
+        <template v-else>
+          <div v-if="mobile" class="d-flex align-center ga-1">
+            <v-menu>
+              <template #activator="{ props }">
+                <v-btn icon="mdi-dots-vertical" variant="text" v-bind="props"></v-btn>
+              </template>
+
+              <v-list>
+                <v-list-item prepend-icon="mdi-login" to="/login">
+                  <v-list-item-title class="font-weight-bold text-uppercase">
+                    Sign In
+                  </v-list-item-title>
+                </v-list-item>
+              </v-list>
+            </v-menu>
+          </div>
+
+          <div v-else class="d-flex align-center ga-5">
+            <v-btn prepend-icon="mdi-login" rounded="lg" to="/login"> Sign In </v-btn>
+          </div>
         </template>
       </v-app-bar>
 
