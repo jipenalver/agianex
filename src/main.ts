@@ -12,6 +12,10 @@ import 'vuetify/styles'
 import { createVuetify } from 'vuetify'
 import * as components from 'vuetify/components'
 import * as directives from 'vuetify/directives'
+import { VDateInput } from 'vuetify/labs/VDateInput'
+
+// Custom Vuetify
+import { customDefaults, customTheme } from '@/utils/vuetify/config'
 
 // Icons
 import '@mdi/font/css/materialdesignicons.css'
@@ -24,7 +28,14 @@ createFont()
 const app = createApp(App)
 
 const vuetify = createVuetify({
-  components,
+  theme: {
+    themes: customTheme,
+  },
+  defaults: customDefaults,
+  components: {
+    ...components,
+    VDateInput,
+  },
   directives,
 })
 
