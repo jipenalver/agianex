@@ -16,6 +16,11 @@ import * as directives from 'vuetify/directives'
 // Icons
 import '@mdi/font/css/materialdesignicons.css'
 
+// Font
+import { createFont } from './utils/vuetify/font'
+
+createFont()
+
 const app = createApp(App)
 
 const vuetify = createVuetify({
