@@ -5,8 +5,6 @@ import {
   adminNav,
   adminItemsNav1,
   adminItemsNav2,
-  adminItemsNav3,
-  adminItemsNav4,
   settingsItemsNav,
 } from './sideNavigation'
 import { useAuthUserStore } from '@/stores/authUser'
@@ -25,8 +23,6 @@ const noAccessPages = ref<string[]>([])
 const mainNav = ref<MainNavigation[] | SubNavigation[]>([])
 const editableItemsNav1 = ref<SubNavigation[]>([...adminItemsNav1])
 const editableItemsNav2 = ref<SubNavigation[]>([...adminItemsNav2])
-const editableItemsNav3 = ref<SubNavigation[]>([...adminItemsNav3])
-const editableItemsNav4 = ref<SubNavigation[]>([...adminItemsNav4])
 
 onMounted(() => {
   mainNav.value = adminNav
@@ -36,8 +32,6 @@ onMounted(() => {
   const menuItems = [
     { items: editableItemsNav1, title: adminNav[0][0] },
     { items: editableItemsNav2, title: adminNav[1][0] },
-    { items: editableItemsNav3, title: adminNav[2][0] },
-    { items: editableItemsNav4, title: adminNav[3][0] },
   ]
 
   menuItems.forEach(({ items, title }) => {
@@ -54,11 +48,15 @@ onMounted(() => {
 
 <template>
   <v-navigation-drawer
+    class="border-e-md border-solid border-opacity-100 border-primary"
     :model-value="props.isDrawerVisible"
     :persistent="mobile"
     :temporary="mobile"
     :permanent="!mobile"
     :width="300"
+    close-delay="2000"
+    expand-on-hover
+    rail
   >
     <v-list density="compact" lines="one" nav>
       <v-list-item
@@ -75,7 +73,7 @@ onMounted(() => {
 
       <v-divider></v-divider>
 
-      <v-list-group v-for="([title, icon], i) in mainNav" :key="i">
+      <v-list-group v-for="([title, icon], i) in mainNav" :key="i" fluid>
         <template #activator="{ props }" v-if="!noAccessPages.includes(title)">
           <v-list-item v-bind="props" :prepend-icon="icon" color="primary" variant="flat" slim>
             <template #title>
@@ -119,45 +117,11 @@ onMounted(() => {
             </template>
           </v-list-item>
         </template>
-
-        <template v-if="mainNav[2] && title === mainNav[2][0]">
-          <v-list-item
-            v-for="([title, icon, subtitle, to], i) in editableItemsNav3"
-            :key="i"
-            :prepend-icon="icon"
-            :subtitle="subtitle ?? undefined"
-            :to="to ?? undefined"
-            color="primary"
-            variant="flat"
-            slim
-          >
-            <template #title>
-              <span class="font-weight-black"> {{ title }} </span>
-            </template>
-          </v-list-item>
-        </template>
-
-        <template v-if="mainNav[3] && title === mainNav[3][0]">
-          <v-list-item
-            v-for="([title, icon, subtitle, to], i) in editableItemsNav4"
-            :key="i"
-            :prepend-icon="icon"
-            :subtitle="subtitle ?? undefined"
-            :to="to ?? undefined"
-            color="primary"
-            variant="flat"
-            slim
-          >
-            <template #title>
-              <span class="font-weight-black"> {{ title }} </span>
-            </template>
-          </v-list-item>
-        </template>
       </v-list-group>
 
       <v-divider></v-divider>
 
-      <v-list-group>
+      <v-list-group fluid>
         <template #activator="{ props }">
           <v-list-item v-bind="props" prepend-icon="mdi-wrench" color="primary" variant="flat" slim>
             <template #title>
