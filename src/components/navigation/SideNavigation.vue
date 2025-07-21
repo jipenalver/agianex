@@ -4,12 +4,11 @@ import {
   type SubNavigation,
   adminNav,
   adminItemsNav1,
-  adminItemsNav2,
   settingsItemsNav,
 } from './sideNavigation'
 import { useAuthUserStore } from '@/stores/authUser'
-import { onMounted, ref } from 'vue'
 import { useDisplay } from 'vuetify'
+import { onMounted, ref } from 'vue'
 
 const props = defineProps<{
   isDrawerVisible: boolean
@@ -22,17 +21,13 @@ const authUserStore = useAuthUserStore()
 const noAccessPages = ref<string[]>([])
 const mainNav = ref<MainNavigation[] | SubNavigation[]>([])
 const editableItemsNav1 = ref<SubNavigation[]>([...adminItemsNav1])
-const editableItemsNav2 = ref<SubNavigation[]>([...adminItemsNav2])
 
 onMounted(() => {
   mainNav.value = adminNav
 
   if (authUserStore.userRole === 'Super Administrator') return
 
-  const menuItems = [
-    { items: editableItemsNav1, title: adminNav[0][0] },
-    { items: editableItemsNav2, title: adminNav[1][0] },
-  ]
+  const menuItems = [{ items: editableItemsNav1, title: adminNav[0][0] }]
 
   menuItems.forEach(({ items, title }) => {
     if (!items.value) return
@@ -58,7 +53,7 @@ onMounted(() => {
     expand-on-hover
     rail
   >
-    <v-list density="compact" lines="one" nav>
+    <v-list density="compact" lines="two" nav>
       <v-list-item
         prepend-icon="mdi-view-dashboard"
         to="/dashboard"
@@ -100,24 +95,15 @@ onMounted(() => {
             </template>
           </v-list-item>
         </template>
-
-        <template v-if="mainNav[1] && title === mainNav[1][0]">
-          <v-list-item
-            v-for="([title, icon, subtitle, to], i) in editableItemsNav2"
-            :key="i"
-            :prepend-icon="icon"
-            :subtitle="subtitle ?? undefined"
-            :to="to ?? undefined"
-            color="primary"
-            variant="flat"
-            slim
-          >
-            <template #title>
-              <span class="font-weight-black"> {{ title }} </span>
-            </template>
-          </v-list-item>
-        </template>
       </v-list-group>
+
+      <v-divider></v-divider>
+
+      <v-list-item prepend-icon="mdi-chart-line" to="/reports" color="primary" variant="flat" slim>
+        <template #title>
+          <span class="font-weight-black"> Reports </span>
+        </template>
+      </v-list-item>
 
       <v-divider></v-divider>
 

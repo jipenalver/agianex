@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import SideNavigation from '@/components/navigation/SideNavigation.vue'
-import LogoAgianexDark from '@/assets/logos/logo-agianex-v2-dark.png'
 import LogoAgianex from '@/assets/logos/logo-agianex-v2.png'
 import AppLayout from '@/components/layout/AppLayout.vue'
 import { useAuthUserStore } from '@/stores/authUser'
@@ -19,11 +18,6 @@ const authUserStore = useAuthUserStore()
 
 const isLoggedIn = ref(true)
 const isDrawerVisible = ref(xs.value ? false : true)
-const theme = ref(localStorage.getItem('theme') ?? 'light')
-
-const onToggleTheme = () => {
-  theme.value = theme.value === 'light' ? 'dark' : 'light'
-}
 
 onMounted(async () => {
   isLoggedIn.value = await authUserStore.isAuthenticated()
@@ -34,7 +28,6 @@ onMounted(async () => {
   <AppLayout
     :is-with-app-bar-icon="isLoggedIn"
     @is-drawer-visible="isDrawerVisible = !isDrawerVisible"
-    @theme="onToggleTheme"
   >
     <template #navigation v-if="isLoggedIn">
       <SideNavigation :is-drawer-visible="isDrawerVisible"></SideNavigation>
@@ -44,7 +37,7 @@ onMounted(async () => {
       <v-container>
         <v-row>
           <v-col class="mx-auto mt-16 text-center" cols="12" xl="4" lg="5">
-            <v-empty-state :image="theme === 'light' ? LogoAgianex : LogoAgianexDark">
+            <v-empty-state :image="LogoAgianex">
               <template #headline>
                 <h1 class="text-h1 font-weight-black text-primary">{{ props.headline }}</h1>
               </template>

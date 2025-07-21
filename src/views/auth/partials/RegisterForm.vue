@@ -18,34 +18,38 @@ const isPasswordVisible = ref(false)
 
   <v-form ref="refVForm" @submit.prevent="onFormSubmit">
     <v-text-field
-      class="mt-3"
+      class="mt-5"
       v-model="formData.firstname"
+      label="Firstname"
       placeholder="Firstname"
       :rules="[requiredValidator]"
     ></v-text-field>
 
     <v-text-field
-      class="mt-3"
+      class="mt-5"
       v-model="formData.lastname"
+      label="Lastname"
       placeholder="Lastname"
       :rules="[requiredValidator]"
     ></v-text-field>
 
     <v-text-field
-      class="mt-3"
+      class="mt-5"
       type="email"
       v-model="formData.email"
       prepend-inner-icon="mdi-email-outline"
+      label="Email Address"
       placeholder="Email Address"
       :rules="[requiredValidator, emailValidator]"
     ></v-text-field>
 
     <v-text-field
-      class="mt-3"
+      class="mt-5"
       v-model="formData.password"
       prepend-inner-icon="mdi-lock-outline"
       :append-inner-icon="isPasswordVisible ? 'mdi-eye-off' : 'mdi-eye'"
       :type="isPasswordVisible ? 'text' : 'password'"
+      label="Password"
       placeholder="Password"
       @click:append-inner="isPasswordVisible = !isPasswordVisible"
       :rules="[requiredValidator]"
@@ -59,7 +63,7 @@ const isPasswordVisible = ref(false)
       variant="elevated"
       rounded="lg"
       block
-      :disabled="formAction.formProcess"
+      disabled
       :loading="formAction.formProcess"
     >
       Register

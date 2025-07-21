@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import TopProfileNavigation from '@/components/navigation/TopProfileNavigation.vue'
+import LogoAgianexDark from '@/assets/logos/logo-agianex-v2-dark.png'
 import LogoAgianex from '@/assets/logos/logo-agianex-v2.png'
 import imageBg from '@/assets/images/img-bxu-hall.jpg'
 import { useAuthUserStore } from '@/stores/authUser'
@@ -51,7 +52,11 @@ onMounted(async () => {
             >
               AGIANEX
             </h1>
-            <v-img v-else max-width="75" :src="LogoAgianex"></v-img>
+            <v-img
+              v-else
+              max-width="60"
+              :src="theme === 'light' ? LogoAgianex : LogoAgianexDark"
+            ></v-img>
           </RouterLink>
         </v-app-bar-title>
 

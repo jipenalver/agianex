@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import SideNavigation from '@/components/navigation/SideNavigation.vue'
+import HeaderPanel from '@/components/common/HeaderPanel.vue'
 import AppLayout from '@/components/layout/AppLayout.vue'
-import WelcomeWidget from './partials/WelcomeWidget.vue'
-import MapWidget from './partials/MapWidget.vue'
+import UsersTable from './partials/UsersTable.vue'
 import { useDisplay } from 'vuetify'
 import { ref } from 'vue'
 
@@ -19,15 +19,13 @@ const isDrawerVisible = ref(xs.value ? false : true)
 
     <template #content>
       <v-container fluid>
-        <v-row>
-          <v-col cols="12" lg="12">
-            <WelcomeWidget></WelcomeWidget>
-          </v-col>
+        <HeaderPanel
+          :header-items="['Users Management', 'List of Users']"
+          header-icon="mdi-list-box"
+          headline="Manage user accounts and assign roles dynamically."
+        ></HeaderPanel>
 
-          <v-col cols="12">
-            <MapWidget></MapWidget>
-          </v-col>
-        </v-row>
+        <UsersTable></UsersTable>
       </v-container>
     </template>
   </AppLayout>

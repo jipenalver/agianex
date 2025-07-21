@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import SideNavigation from '@/components/navigation/SideNavigation.vue'
+import HeaderPanel from '@/components/common/HeaderPanel.vue'
 import AppLayout from '@/components/layout/AppLayout.vue'
-import WelcomeWidget from './partials/WelcomeWidget.vue'
-import MapWidget from './partials/MapWidget.vue'
+import UserRolesList from './partials/UserRolesCards.vue'
 import { useDisplay } from 'vuetify'
 import { ref } from 'vue'
 
@@ -19,15 +19,14 @@ const isDrawerVisible = ref(xs.value ? false : true)
 
     <template #content>
       <v-container fluid>
-        <v-row>
-          <v-col cols="12" lg="12">
-            <WelcomeWidget></WelcomeWidget>
-          </v-col>
+        <HeaderPanel
+          :header-items="['Admin Users', 'User Roles']"
+          header-icon="mdi-tag-multiple"
+          headline="A role grants access to specific pages and features, ensuring that admin users can
+              access what they need based on their assigned role."
+        ></HeaderPanel>
 
-          <v-col cols="12">
-            <MapWidget></MapWidget>
-          </v-col>
-        </v-row>
+        <UserRolesList></UserRolesList>
       </v-container>
     </template>
   </AppLayout>
