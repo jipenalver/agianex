@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import profileDefault from '@/assets/misc/profile-default.jpg'
+import ProfileDefault from '@/assets/misc/profile-default.jpg'
 import { useAuthUserStore } from '@/stores/authUser'
 
 const authUserStore = useAuthUserStore()
@@ -15,7 +15,7 @@ const authUserStore = useAuthUserStore()
             class="mx-auto rounded-circle"
             color="primary"
             aspect-ratio="1"
-            :src="authUserStore.userData?.avatar ?? profileDefault"
+            :src="authUserStore.userData?.avatar ?? ProfileDefault"
             alt="Profile Picture"
             cover
           >

@@ -1,4 +1,4 @@
-import profileDefault from '@/assets/misc/profile-default.jpg'
+import ProfileDefault from '@/assets/misc/profile-default.jpg'
 import { formActionDefault } from '@/utils/helpers/constants'
 import { useAuthUserStore } from '@/stores/authUser'
 import { fileExtract } from '@/utils/helpers/others'
@@ -13,7 +13,7 @@ export function usePictureForm() {
   }
   const formData = ref({ ...formDataDefault })
   const formAction = ref({ ...formActionDefault })
-  const imgPreview = ref(authUserStore.userData?.avatar ?? profileDefault)
+  const imgPreview = ref(authUserStore.userData?.avatar ?? ProfileDefault)
   const refVForm = ref()
 
   // Actions
@@ -24,7 +24,7 @@ export function usePictureForm() {
   }
 
   const onPreviewReset = () => {
-    imgPreview.value = authUserStore.userData?.avatar ?? profileDefault
+    imgPreview.value = authUserStore.userData?.avatar ?? ProfileDefault
   }
 
   const onSubmit = async () => {
@@ -42,7 +42,7 @@ export function usePictureForm() {
     } else if (data) {
       formAction.value = {
         ...formActionDefault,
-        formMessage: `Successfully Updated Profile Image. ${imgPreview.value !== profileDefault ? 'Image will be updated after 24 hours.' : ''}`,
+        formMessage: `Successfully Updated Profile Image. ${imgPreview.value !== ProfileDefault ? 'Image will be updated after 24 hours.' : ''}`,
         formAlert: true,
       }
 
