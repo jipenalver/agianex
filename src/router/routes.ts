@@ -7,12 +7,6 @@ import DashboardView from '@/views/system/dashboard/DashboardView.vue'
 import SettingsView from '@/views/system/settings/SettingsView.vue'
 // import UserRolesView from '@/views/system/admin/manage-users/UserRolesView.vue'
 // import UsersView from '@/views/system/admin/manage-users/UsersView.vue'
-// import EmployeesView from '@/views/system/admin/manage-employees/EmployeesView.vue'
-// import RatesBenefitsView from '@/views/system/admin/manage-employees/RatesBenefitsView.vue'
-// import AttendanceView from '@/views/system/admin/manage-attendance/AttendanceView.vue'
-// import LeaveView from '@/views/system/admin/manage-attendance/LeaveView.vue'
-// import OvertimeView from '@/views/system/admin/manage-attendance/OvertimeView.vue'
-// import PayrollView from '@/views/system/admin/manage-payroll/PayrollView.vue'
 
 export const routes = [
   // Landing
