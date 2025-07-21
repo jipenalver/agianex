@@ -2,6 +2,7 @@
 import SideNavigation from '@/components/navigation/SideNavigation.vue'
 import AppLayout from '@/components/layout/AppLayout.vue'
 import WelcomeWidget from './partials/WelcomeWidget.vue'
+import MapWidget from './partials/MapWidget.vue'
 import { useDisplay } from 'vuetify'
 import { ref } from 'vue'
 
@@ -23,7 +24,9 @@ const isDrawerVisible = ref(xs.value ? false : true)
             <WelcomeWidget></WelcomeWidget>
           </v-col>
 
-          <v-col cols="12"></v-col>
+          <v-col cols="12">
+            <MapWidget></MapWidget>
+          </v-col>
         </v-row>
       </v-container>
     </template>
