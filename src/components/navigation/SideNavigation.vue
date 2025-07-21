@@ -1,15 +1,8 @@
 <script setup lang="ts">
-import {
-  type MainNavigation,
-  type SubNavigation,
-  adminNav,
-  adminItemsNav1,
-  adminItemsNav2,
-  settingsItemsNav,
-} from './sideNavigation'
+import { settingsItemsNav } from './sideNavigation'
 import { useAuthUserStore } from '@/stores/authUser'
-import { onMounted, ref } from 'vue'
 import { useDisplay } from 'vuetify'
+import { onMounted } from 'vue'
 
 const props = defineProps<{
   isDrawerVisible: boolean
@@ -19,30 +12,30 @@ const { mobile } = useDisplay()
 
 const authUserStore = useAuthUserStore()
 
-const noAccessPages = ref<string[]>([])
-const mainNav = ref<MainNavigation[] | SubNavigation[]>([])
-const editableItemsNav1 = ref<SubNavigation[]>([...adminItemsNav1])
-const editableItemsNav2 = ref<SubNavigation[]>([...adminItemsNav2])
+// const noAccessPages = ref<string[]>([])
+// const mainNav = ref<MainNavigation[] | SubNavigation[]>([])
+// const editableItemsNav1 = ref<SubNavigation[]>([...adminItemsNav1])
+// const editableItemsNav2 = ref<SubNavigation[]>([...adminItemsNav2])
 
 onMounted(() => {
-  mainNav.value = adminNav
+  // mainNav.value = adminNav
 
   if (authUserStore.userRole === 'Super Administrator') return
 
-  const menuItems = [
-    { items: editableItemsNav1, title: adminNav[0][0] },
-    { items: editableItemsNav2, title: adminNav[1][0] },
-  ]
+  // const menuItems = [
+  //   { items: editableItemsNav1, title: adminNav[0][0] },
+  //   { items: editableItemsNav2, title: adminNav[1][0] },
+  // ]
 
-  menuItems.forEach(({ items, title }) => {
-    if (!items.value) return
+  // menuItems.forEach(({ items, title }) => {
+  //   if (!items.value) return
 
-    items.value = items.value.filter((item: { [key: number]: string }) =>
-      authUserStore.authPages.includes(item[3]),
-    )
+  //   items.value = items.value.filter((item: { [key: number]: string }) =>
+  //     authUserStore.authPages.includes(item[3]),
+  //   )
 
-    if (items.value.length === 0) noAccessPages.value.push(title)
-  })
+  //   if (items.value.length === 0) noAccessPages.value.push(title)
+  // })
 })
 </script>
 
@@ -58,7 +51,7 @@ onMounted(() => {
     expand-on-hover
     rail
   >
-    <v-list density="compact" lines="one" nav>
+    <v-list density="compact" lines="two" nav>
       <v-list-item
         prepend-icon="mdi-view-dashboard"
         to="/dashboard"
@@ -73,51 +66,11 @@ onMounted(() => {
 
       <v-divider></v-divider>
 
-      <v-list-group v-for="([title, icon], i) in mainNav" :key="i" fluid>
-        <template #activator="{ props }" v-if="!noAccessPages.includes(title)">
-          <v-list-item v-bind="props" :prepend-icon="icon" color="primary" variant="flat" slim>
-            <template #title>
-              <span class="font-weight-black">
-                {{ title }}
-              </span>
-            </template>
-          </v-list-item>
+      <v-list-item prepend-icon="mdi-chart-line" to="/reports" color="primary" variant="flat" slim>
+        <template #title>
+          <span class="font-weight-black"> Reports </span>
         </template>
-
-        <template v-if="mainNav[0] && title === mainNav[0][0]">
-          <v-list-item
-            v-for="([title, icon, subtitle, to], i) in editableItemsNav1"
-            :key="i"
-            :prepend-icon="icon"
-            :subtitle="subtitle ?? undefined"
-            :to="to ?? undefined"
-            color="primary"
-            variant="flat"
-            slim
-          >
-            <template #title>
-              <span class="font-weight-black"> {{ title }} </span>
-            </template>
-          </v-list-item>
-        </template>
-
-        <template v-if="mainNav[1] && title === mainNav[1][0]">
-          <v-list-item
-            v-for="([title, icon, subtitle, to], i) in editableItemsNav2"
-            :key="i"
-            :prepend-icon="icon"
-            :subtitle="subtitle ?? undefined"
-            :to="to ?? undefined"
-            color="primary"
-            variant="flat"
-            slim
-          >
-            <template #title>
-              <span class="font-weight-black"> {{ title }} </span>
-            </template>
-          </v-list-item>
-        </template>
-      </v-list-group>
+      </v-list-item>
 
       <v-divider></v-divider>
 
