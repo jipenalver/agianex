@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import LogoAgianex from '@/assets/logos/logo-agianex-v1.png'
+import LogoAgianex from '@/assets/logos/logo-agianex-v2.png'
 import AppLayout from '@/components/layout/AppLayout.vue'
 import LoginForm from './partials/LoginForm.vue'
 import { useDisplay } from 'vuetify'
