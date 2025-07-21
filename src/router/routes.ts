@@ -5,8 +5,8 @@ import ForbiddenView from '@/views/errors/ForbiddenView.vue'
 import NotFoundView from '@/views/errors/NotFoundView.vue'
 import DashboardView from '@/views/system/dashboard/DashboardView.vue'
 import SettingsView from '@/views/system/settings/SettingsView.vue'
-// import UserRolesView from '@/views/system/admin/manage-users/UserRolesView.vue'
-// import UsersView from '@/views/system/admin/manage-users/UsersView.vue'
+import UserRolesView from '@/views/system/admin/manage-users/UserRolesView.vue'
+import UsersView from '@/views/system/admin/manage-users/UsersView.vue'
 
 export const routes = [
   // Landing
@@ -45,19 +45,19 @@ export const routes = [
     meta: { requiresAuth: true, isDefault: true },
   },
 
-  // // Users
-  // {
-  //   path: '/admin/users/roles',
-  //   name: 'admin-users-roles',
-  //   component: UserRolesView,
-  //   meta: { requiresAuth: true },
-  // },
-  // {
-  //   path: '/admin/users/list',
-  //   name: 'admin-users-list',
-  //   component: UsersView,
-  //   meta: { requiresAuth: true },
-  // },
+  // Users
+  {
+    path: '/admin/users/roles',
+    name: 'admin-users-roles',
+    component: UserRolesView,
+    meta: { requiresAuth: true },
+  },
+  {
+    path: '/admin/users/list',
+    name: 'admin-users-list',
+    component: UsersView,
+    meta: { requiresAuth: true },
+  },
 
   // Errors Pages
   {
