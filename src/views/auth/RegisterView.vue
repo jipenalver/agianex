@@ -42,7 +42,7 @@ const onToggleTheme = () => {
               <v-card-text class="text-center">
                 Already have an account?
                 <v-spacer v-if="xs"></v-spacer>
-                <RouterLink class="ms-2 text-primary" to="/register">
+                <RouterLink class="ms-2 text-primary" to="/login">
                   Sign In <v-icon icon="mdi-chevron-left"></v-icon>
                 </RouterLink>
               </v-card-text>
