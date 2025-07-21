@@ -17,23 +17,23 @@ const isPasswordVisible = ref(false)
   ></AppAlert>
 
   <v-form ref="refVForm" @submit.prevent="onFormSubmit">
-    <div class="text-subtitle-1 text-medium-emphasis">Account</div>
-
     <v-text-field
+      class="mt-5"
       type="email"
       v-model="formData.email"
       prepend-inner-icon="mdi-email-outline"
+      label="Email Address"
       placeholder="Email Address"
       :rules="[requiredValidator, emailValidator]"
     ></v-text-field>
 
-    <div class="text-subtitle-1 text-medium-emphasis">Password</div>
-
     <v-text-field
+      class="mt-5"
       v-model="formData.password"
       prepend-inner-icon="mdi-lock-outline"
       :append-inner-icon="isPasswordVisible ? 'mdi-eye-off' : 'mdi-eye'"
       :type="isPasswordVisible ? 'text' : 'password'"
+      label="Password"
       placeholder="Password"
       @click:append-inner="isPasswordVisible = !isPasswordVisible"
       :rules="[requiredValidator]"
