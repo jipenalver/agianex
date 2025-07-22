@@ -12,7 +12,7 @@ const authUserStore = useAuthUserStore()
   <v-card
     class="border-md border-solid border-opacity-100 border-primary"
     elevation="8"
-    min-height="175"
+    min-height="135"
   >
     <v-card-text>
       <v-row>
