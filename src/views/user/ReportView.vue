@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import SideNavigation from '@/components/navigation/SideNavigation.vue'
+import FabNavigation from '@/components/navigation/FabNavigation.vue'
 import HeaderPanel from '@/components/common/HeaderPanel.vue'
 import AppLayout from '@/components/layout/AppLayout.vue'
+import ReportTable from './partials/ReportTable.vue'
 import { useDisplay } from 'vuetify'
 import { ref } from 'vue'
 
@@ -23,6 +25,10 @@ const isDrawerVisible = ref(xs.value ? false : true)
           header-icon="mdi-human-greeting-proximity"
           headline="Report road infrastructure issues and other concerns."
         ></HeaderPanel>
+
+        <ReportTable></ReportTable>
+
+        <FabNavigation></FabNavigation>
       </v-container>
     </template>
   </AppLayout>

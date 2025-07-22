@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import SideNavigation from '@/components/navigation/SideNavigation.vue'
+import FabNavigation from '@/components/navigation/FabNavigation.vue'
 import AppLayout from '@/components/layout/AppLayout.vue'
 import WelcomeWidget from './partials/WelcomeWidget.vue'
+import ReportsWidget from './partials/ReportsWidget.vue'
 import { useAuthUserStore } from '@/stores/authUser'
 import MapWidget from './partials/MapWidget.vue'
 import { useDisplay } from 'vuetify'
@@ -30,6 +32,12 @@ const isDrawerVisible = ref(xs.value ? false : true)
           <v-col v-if="authUserStore.userRole !== 'User'" cols="12">
             <MapWidget></MapWidget>
           </v-col>
+
+          <v-col v-if="authUserStore.userRole === 'User'" cols="12">
+            <ReportsWidget></ReportsWidget>
+          </v-col>
+
+          <FabNavigation v-if="authUserStore.userRole === 'User'"></FabNavigation>
         </v-row>
       </v-container>
     </template>

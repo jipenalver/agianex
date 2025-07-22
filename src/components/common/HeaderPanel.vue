@@ -20,7 +20,11 @@ const items = computed(() =>
 </script>
 
 <template>
-  <v-card class="mb-5" :image="props.image">
+  <v-card
+    class="mb-5 border-md border-solid border-opacity-100 border-primary"
+    elevation="8"
+    :image="props.image"
+  >
     <template #title>
       <span class="text-h6 font-weight-bold">
         <v-breadcrumbs :items="xs ? items.slice(-1) : items">
