@@ -16,7 +16,7 @@ export const adminItemsNav1: SubNavigation[] = [
 ]
 
 export const adminItemsNav2: SubNavigation[] = [
-  ['Citizen Reporting', 'mdi-human-greeting-proximity', '', '/user/citizen'],
+  ['Citizen Reporting', 'mdi-human-greeting-proximity', '', '/user/report'],
 ]
 
 export const adminItemsNav3: SubNavigation[] = [
