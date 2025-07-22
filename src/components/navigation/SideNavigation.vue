@@ -106,7 +106,7 @@ onMounted(() => {
 
         <template v-if="mainNav[1] && title === mainNav[1][0]">
           <v-list-item
-            v-for="([title, icon, subtitle, to], i) in editableItemsNav1"
+            v-for="([title, icon, subtitle, to], i) in editableItemsNav2"
             :key="i"
             :prepend-icon="icon"
             :subtitle="subtitle ?? undefined"
@@ -123,7 +123,7 @@ onMounted(() => {
 
         <template v-if="mainNav[2] && title === mainNav[2][0]">
           <v-list-item
-            v-for="([title, icon, subtitle, to], i) in editableItemsNav1"
+            v-for="([title, icon, subtitle, to], i) in editableItemsNav3"
             :key="i"
             :prepend-icon="icon"
             :subtitle="subtitle ?? undefined"
