@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import TopProfileNavigation from '@/components/navigation/TopProfileNavigation.vue'
 import LogoAgianexDark from '@/assets/logos/logo-agianex-v2-dark.png'
+import BottomNavigation from '../navigation/BottomNavigation.vue'
 import LogoAgianex from '@/assets/logos/logo-agianex-v2.png'
 import imageBg from '@/assets/images/img-bxu-hall.jpg'
 import { useAuthUserStore } from '@/stores/authUser'
@@ -103,7 +104,12 @@ onMounted(async () => {
         </v-img>
       </v-main>
 
+      <BottomNavigation
+        v-if="mobile && isLoggedIn && authUserStore.userRole === 'User'"
+      ></BottomNavigation>
+
       <v-footer
+        v-else
         class="d-flex border-t-md border-solid border-opacity-100 border-primary"
         :class="mobile ? 'justify-center' : 'justify-between'"
         app
