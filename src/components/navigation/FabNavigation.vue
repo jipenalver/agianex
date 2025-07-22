@@ -171,7 +171,7 @@ const saveSelectedImage = async (imageData: string, fileName: string) => {
 
 <template>
   <v-fab id="fab" variant="elevated" color="primary" size="x-large" icon app>
-    <v-icon>{{ isFabOpen ? 'mdi-close' : 'mdi-human-greeting-proximity' }}</v-icon>
+    <v-icon>{{ isFabOpen ? 'mdi-close' : 'mdi-bullhorn' }}</v-icon>
     <v-speed-dial
       v-model="isFabOpen"
       location="bottom center"
