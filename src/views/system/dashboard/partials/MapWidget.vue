@@ -17,32 +17,26 @@ const mapZoom = ref(15)
 
 // Computed center for the map
 const center = computed(() => {
-  if (isTrackingPause.value) {
-    return defaultLatLng
-  }
+  if (isTrackingPause.value) return defaultLatLng
 
   if (
     coords.value.latitude !== Number.POSITIVE_INFINITY &&
     coords.value.longitude !== Number.POSITIVE_INFINITY
-  ) {
+  )
     return { lat: coords.value.latitude, lng: coords.value.longitude }
-  }
 
   return defaultLatLng
 })
 
 // Computed marker position
-const markerPosition = computed(() => {
-  if (isTrackingPause.value) {
-    return defaultLatLng
-  }
+const marker = computed(() => {
+  if (isTrackingPause.value) return defaultLatLng
 
   if (
     coords.value.latitude !== Number.POSITIVE_INFINITY &&
     coords.value.longitude !== Number.POSITIVE_INFINITY
-  ) {
+  )
     return { lat: coords.value.latitude, lng: coords.value.longitude }
-  }
 
   return defaultLatLng
 })
@@ -69,9 +63,8 @@ watchEffect(() => {
     !isTrackingPause.value &&
     coords.value.latitude !== Number.POSITIVE_INFINITY &&
     coords.value.longitude !== Number.POSITIVE_INFINITY
-  ) {
+  )
     mapZoom.value = 17
-  }
 })
 </script>
 
@@ -101,7 +94,7 @@ watchEffect(() => {
         :center="center"
         :zoom="mapZoom"
       >
-        <Marker :options="{ position: markerPosition }" />
+        <Marker :options="{ position: marker }" />
       </GoogleMap>
     </v-card-text>
   </v-card>
