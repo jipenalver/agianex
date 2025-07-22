@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import TopProfileNavigation from '@/components/navigation/TopProfileNavigation.vue'
 import LogoAgianexDark from '@/assets/logos/logo-agianex-v2-dark.png'
+import BottomNavigation from '../navigation/BottomNavigation.vue'
 import LogoAgianex from '@/assets/logos/logo-agianex-v2.png'
 import imageBg from '@/assets/images/img-bxu-hall.jpg'
 import { useAuthUserStore } from '@/stores/authUser'
@@ -80,7 +81,7 @@ onMounted(async () => {
               </template>
 
               <v-list>
-                <v-list-item prepend-icon="mdi-login" to="/login">
+                <v-list-item prepend-icon="mdi-login" to="/">
                   <v-list-item-title class="font-weight-bold text-uppercase">
                     Sign In
                   </v-list-item-title>
@@ -90,7 +91,7 @@ onMounted(async () => {
           </div>
 
           <div v-else class="d-flex align-center ga-5">
-            <v-btn prepend-icon="mdi-login" rounded="lg" to="/login"> Sign In </v-btn>
+            <v-btn prepend-icon="mdi-login" rounded="lg" to="/"> Sign In </v-btn>
           </div>
         </template>
       </v-app-bar>
@@ -103,7 +104,12 @@ onMounted(async () => {
         </v-img>
       </v-main>
 
+      <BottomNavigation
+        v-if="mobile && isLoggedIn && authUserStore.userRole === 'User'"
+      ></BottomNavigation>
+
       <v-footer
+        v-else
         class="d-flex border-t-md border-solid border-opacity-100 border-primary"
         :class="mobile ? 'justify-center' : 'justify-between'"
         app

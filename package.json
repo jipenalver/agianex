@@ -13,15 +13,26 @@
     "format": "prettier --write src/"
   },
   "dependencies": {
+    "@capacitor/android": "7.4.2",
+    "@capacitor/app": "7.0.1",
+    "@capacitor/browser": "^7.0.1",
+    "@capacitor/camera": "^7.0.1",
+    "@capacitor/core": "7.4.2",
+    "@capacitor/filesystem": "^7.1.2",
+    "@capacitor/haptics": "7.0.1",
+    "@capacitor/keyboard": "7.0.1",
+    "@capacitor/status-bar": "7.0.1",
     "@supabase/supabase-js": "^2.52.0",
     "@vueuse/core": "^13.5.0",
     "pinia": "^3.0.3",
     "vue": "^3.5.17",
     "vue-router": "^4.5.1",
+    "vue3-google-map": "^0.23.0",
     "vuetify": "^3.9.2",
     "webfontloader": "^1.6.28"
   },
   "devDependencies": {
+    "@capacitor/cli": "7.4.2",
     "@mdi/font": "^7.4.47",
     "@tsconfig/node22": "^22.0.2",
     "@types/node": "^22.15.32",

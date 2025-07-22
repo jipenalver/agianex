@@ -1,4 +1,3 @@
-import HomeView from '@/views/landing/HomeView.vue'
 import LoginView from '@/views/auth/LoginView.vue'
 import RegisterView from '@/views/auth/RegisterView.vue'
 import ForbiddenView from '@/views/errors/ForbiddenView.vue'
@@ -7,19 +6,12 @@ import DashboardView from '@/views/system/dashboard/DashboardView.vue'
 import SettingsView from '@/views/system/settings/SettingsView.vue'
 import UserRolesView from '@/views/system/admin/manage-users/UserRolesView.vue'
 import UsersView from '@/views/system/admin/manage-users/UsersView.vue'
+import ReportView from '@/views/user/ReportView.vue'
 
 export const routes = [
-  // Landing
-  {
-    path: '/',
-    name: 'home',
-    component: HomeView,
-    meta: { requiresAuth: false },
-  },
-
   // Auth
   {
-    path: '/login',
+    path: '/',
     name: 'login',
     component: LoginView,
     meta: { requiresAuth: false },
@@ -45,7 +37,7 @@ export const routes = [
     meta: { requiresAuth: true, isDefault: true },
   },
 
-  // Users
+  // Admin
   {
     path: '/admin/users/roles',
     name: 'admin-users-roles',
@@ -56,6 +48,14 @@ export const routes = [
     path: '/admin/users/list',
     name: 'admin-users-list',
     component: UsersView,
+    meta: { requiresAuth: true },
+  },
+
+  // Users
+  {
+    path: '/user/report',
+    name: 'user-report',
+    component: ReportView,
     meta: { requiresAuth: true },
   },
 

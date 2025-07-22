@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">agianex</string>
+    <string name="title_activity_main">agianex</string>
+    <string name="package_name">com.agianex</string>
+    <string name="custom_url_scheme">com.agianex</string>
+</resources>

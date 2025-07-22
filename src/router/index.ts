@@ -14,7 +14,7 @@ router.beforeEach(async (to) => {
   const isLoggedIn = await authUserStore.isAuthenticated()
 
   // If logged in, prevent access to login or register pages
-  if (isLoggedIn && (to.name === 'home' || to.name === 'login' || to.name === 'register')) {
+  if (isLoggedIn && (to.name === 'login' || to.name === 'register')) {
     // redirect the user to the dashboard page
     return { name: 'dashboard' }
   }

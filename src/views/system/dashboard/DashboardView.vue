@@ -2,11 +2,14 @@
 import SideNavigation from '@/components/navigation/SideNavigation.vue'
 import AppLayout from '@/components/layout/AppLayout.vue'
 import WelcomeWidget from './partials/WelcomeWidget.vue'
+import { useAuthUserStore } from '@/stores/authUser'
 import MapWidget from './partials/MapWidget.vue'
 import { useDisplay } from 'vuetify'
 import { ref } from 'vue'
 
 const { xs } = useDisplay()
+
+const authUserStore = useAuthUserStore()
 
 const isDrawerVisible = ref(xs.value ? false : true)
 </script>
@@ -20,11 +23,11 @@ const isDrawerVisible = ref(xs.value ? false : true)
     <template #content>
       <v-container fluid>
         <v-row>
-          <v-col cols="12" lg="12">
+          <v-col cols="12">
             <WelcomeWidget></WelcomeWidget>
           </v-col>
 
-          <v-col cols="12">
+          <v-col v-if="authUserStore.userRole !== 'User'" cols="12">
             <MapWidget></MapWidget>
           </v-col>
         </v-row>
