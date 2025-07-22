@@ -1,5 +1,9 @@
 <script setup lang="ts">
-import { GoogleMap, Marker } from 'vue3-google-map'
+import {
+  GoogleMap,
+  AdvancedMarker,
+  // Marker
+} from 'vue3-google-map'
 import { computed, ref, watchEffect } from 'vue'
 import { useGeolocation } from '@vueuse/core'
 
@@ -29,16 +33,37 @@ const center = computed(() => {
 })
 
 // Computed marker position
-const marker = computed(() => {
-  if (isTrackingPause.value) return defaultLatLng
+// const marker = computed(() => {
+//   if (isTrackingPause.value) return defaultLatLng
 
+//   if (
+//     coords.value.latitude !== Number.POSITIVE_INFINITY &&
+//     coords.value.longitude !== Number.POSITIVE_INFINITY
+//   )
+//     return { lat: coords.value.latitude, lng: coords.value.longitude }
+
+//   return defaultLatLng
+// })
+
+// Marker options as ref state
+const markerOptions = ref({
+  position: center.value,
+  title: 'You are Here!',
+})
+
+// Watch center changes to update markerOptions position and zoom
+watchEffect(() => {
+  // Update marker position
+  markerOptions.value.position = center.value
+
+  // Update zoom when location is found and tracking is active
   if (
+    !isTrackingPause.value &&
     coords.value.latitude !== Number.POSITIVE_INFINITY &&
     coords.value.longitude !== Number.POSITIVE_INFINITY
-  )
-    return { lat: coords.value.latitude, lng: coords.value.longitude }
-
-  return defaultLatLng
+  ) {
+    mapZoom.value = 17
+  }
 })
 
 // Toggle Geolocation Tracking
@@ -56,53 +81,64 @@ const onTrackingPause = () => {
     mapZoom.value = 17
   }
 }
-
-// Watch Coords variable if it changes to update zoom when location is found
-watchEffect(() => {
-  if (
-    !isTrackingPause.value &&
-    coords.value.latitude !== Number.POSITIVE_INFINITY &&
-    coords.value.longitude !== Number.POSITIVE_INFINITY
-  )
-    mapZoom.value = 17
-})
 </script>
 
 <template>
-  <v-card class="border-md border-solid border-opacity-100 border-primary" title="Citizen Report">
-    <template #subtitle>
-      <div class="text-wrap">
-        {{ `LatLng: ${coords.latitude}, ${coords.longitude}` }} <br />
-        {{ `Date/Time: ${new Date(locatedAt as number).toLocaleString()}` }}
-      </div>
-    </template>
-
-    <template #append>
-      <v-btn @click="onTrackingPause" variant="text" icon>
-        <v-icon :icon="isTrackingPause ? 'mdi-refresh' : 'mdi-pause'"></v-icon>
-
-        <v-tooltip activator="parent" location="top">
-          {{ isTrackingPause ? 'Resume Tracking' : 'Pause Tracking' }}
-        </v-tooltip>
-      </v-btn>
-    </template>
-
-    <v-card-text>
-      <GoogleMap
-        api-key="AIzaSyBiyf0K2SL3k9iXh7cKB4mB7eo3g4jd39k"
-        style="width: 100%; height: 500px"
-        :center="center"
-        :zoom="mapZoom"
+  <v-row>
+    <v-col cols="12" lg="9">
+      <v-card
+        class="border-md border-solid border-opacity-100 border-primary"
+        title="Citizen Report"
       >
-        <Marker :options="{ position: marker }" />
-      </GoogleMap>
-    </v-card-text>
-  </v-card>
+        <template #subtitle>
+          <div class="text-wrap">
+            {{ `LatLng: ${coords.latitude}, ${coords.longitude}` }} <br />
+            {{ `Date/Time: ${new Date(locatedAt as number).toLocaleString()}` }}
+          </div>
+        </template>
+
+        <template #append>
+          <v-btn @click="onTrackingPause" variant="text" icon>
+            <v-icon :icon="isTrackingPause ? 'mdi-refresh' : 'mdi-pause'"></v-icon>
+
+            <v-tooltip activator="parent" location="top">
+              {{ isTrackingPause ? 'Resume Tracking' : 'Pause Tracking' }}
+            </v-tooltip>
+          </v-btn>
+        </template>
+
+        <v-card-text>
+          <GoogleMap
+            id="map"
+            api-key="AIzaSyBiyf0K2SL3k9iXh7cKB4mB7eo3g4jd39k"
+            :center="center"
+            :zoom="mapZoom"
+            map-id="DEMO_MAP_ID"
+          >
+            <!-- <Marker :options="{ position: marker }" /> -->
+            <AdvancedMarker :options="markerOptions">
+              <template #content>
+                <div style="background: white; color: black; padding: 5px; border-radius: 5px">
+                  You are here!
+                </div>
+              </template>
+            </AdvancedMarker>
+          </GoogleMap>
+        </v-card-text>
+      </v-card>
+    </v-col>
+
+    <v-col cols="12" lg="3">
+      <v-card class="border-md border-solid border-opacity-100 border-primary" title="Filters">
+        <v-card-text> </v-card-text>
+      </v-card>
+    </v-col>
+  </v-row>
 </template>
 
 <style scoped>
 #map {
   width: 100%;
-  height: 550px;
+  height: 70dvh;
 }
 </style>
