@@ -81,7 +81,7 @@ onMounted(async () => {
               </template>
 
               <v-list>
-                <v-list-item prepend-icon="mdi-login" to="/login">
+                <v-list-item prepend-icon="mdi-login" to="/">
                   <v-list-item-title class="font-weight-bold text-uppercase">
                     Sign In
                   </v-list-item-title>
@@ -91,7 +91,7 @@ onMounted(async () => {
           </div>
 
           <div v-else class="d-flex align-center ga-5">
-            <v-btn prepend-icon="mdi-login" rounded="lg" to="/login"> Sign In </v-btn>
+            <v-btn prepend-icon="mdi-login" rounded="lg" to="/"> Sign In </v-btn>
           </div>
         </template>
       </v-app-bar>
