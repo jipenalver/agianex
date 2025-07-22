@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import SideNavigation from '@/components/navigation/SideNavigation.vue'
+import FabNavigation from '@/components/navigation/FabNavigation.vue'
 import AppLayout from '@/components/layout/AppLayout.vue'
 import WelcomeWidget from './partials/WelcomeWidget.vue'
 import { useAuthUserStore } from '@/stores/authUser'
@@ -30,6 +31,8 @@ const isDrawerVisible = ref(xs.value ? false : true)
           <v-col v-if="authUserStore.userRole !== 'User'" cols="12">
             <MapWidget></MapWidget>
           </v-col>
+
+          <FabNavigation v-else></FabNavigation>
         </v-row>
       </v-container>
     </template>
