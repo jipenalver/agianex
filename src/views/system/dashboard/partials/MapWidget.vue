@@ -129,7 +129,106 @@ const onTrackingPause = () => {
 
     <v-col cols="12" lg="3">
       <v-card class="border-md border-solid border-opacity-100 border-primary" title="Filters">
-        <v-card-text> </v-card-text>
+        <v-card-text>
+          <v-row dense>
+            <!-- Report Type Filter -->
+            <v-col cols="12">
+              <v-select
+                label="Report Type"
+                :items="[
+                  'All Reports',
+                  'Road Issues',
+                  'Public Safety',
+                  'Infrastructure',
+                  'Environmental',
+                  'Utilities',
+                  'Public Transport',
+                ]"
+                variant="outlined"
+                density="compact"
+              ></v-select>
+            </v-col>
+
+            <!-- Status Filter -->
+            <v-col cols="12">
+              <v-select
+                label="Status"
+                :items="['All Status', 'Pending', 'In Progress', 'Resolved', 'Rejected']"
+                variant="outlined"
+                density="compact"
+              ></v-select>
+            </v-col>
+
+            <!-- Priority Filter -->
+            <v-col cols="12">
+              <v-select
+                label="Priority"
+                :items="['All Priorities', 'Low', 'Medium', 'High', 'Critical']"
+                variant="outlined"
+                density="compact"
+              ></v-select>
+            </v-col>
+
+            <!-- Date Range -->
+            <v-col cols="12">
+              <v-text-field
+                label="From Date"
+                type="date"
+                variant="outlined"
+                density="compact"
+              ></v-text-field>
+            </v-col>
+
+            <v-col cols="12">
+              <v-text-field
+                label="To Date"
+                type="date"
+                variant="outlined"
+                density="compact"
+              ></v-text-field>
+            </v-col>
+
+            <!-- Location Radius -->
+            <v-col cols="12">
+              <v-slider
+                label="Search Radius (km)"
+                :min="1"
+                :max="50"
+                :step="1"
+                :model-value="10"
+                show-ticks="always"
+                tick-size="4"
+              >
+                <template #append>
+                  <v-text-field
+                    :model-value="10"
+                    type="number"
+                    style="width: 80px"
+                    density="compact"
+                    variant="outlined"
+                    hide-details
+                  ></v-text-field>
+                </template>
+              </v-slider>
+            </v-col>
+
+            <!-- Show My Reports Only -->
+            <v-col cols="12">
+              <v-checkbox label="Show my reports only" density="compact"></v-checkbox>
+            </v-col>
+
+            <!-- Filter Actions -->
+            <v-col cols="12">
+              <v-btn color="primary" variant="elevated" block prepend-icon="mdi-filter">
+                Apply Filters
+              </v-btn>
+            </v-col>
+
+            <v-col cols="12">
+              <v-btn variant="outlined" block prepend-icon="mdi-filter-off"> Clear Filters </v-btn>
+            </v-col>
+          </v-row>
+        </v-card-text>
       </v-card>
     </v-col>
   </v-row>
@@ -138,7 +237,7 @@ const onTrackingPause = () => {
 <style scoped>
 #map {
   width: 100%;
-  height: 70dvh;
+  height: 59dvh;
 }
 
 #marker {
