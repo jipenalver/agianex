@@ -281,6 +281,21 @@ const isMarkerExpanded = (reportId: string) => {
   font-weight: bold;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
   border: 2px solid white;
+  position: relative;
+  margin-bottom: 10px;
+}
+
+#user-marker::after {
+  content: '';
+  position: absolute;
+  bottom: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 10px solid transparent;
+  border-right: 10px solid transparent;
+  border-top: 10px solid #2196f3;
 }
 
 .report-marker {
