@@ -1,7 +1,7 @@
 export const reportMarkersDummy = [
   {
     id: 'RPT-001',
-    position: { lat: 8.935142, lng: 125.508743 },
+    position: { lat: 8.943569461592341, lng: 125.52297248922524 },
     type: 'Road Issues',
     description: 'Large pothole on J.C. Aquino Avenue',
     priority: 'High',
@@ -9,7 +9,7 @@ export const reportMarkersDummy = [
   },
   {
     id: 'RPT-002',
-    position: { lat: 8.921547, lng: 125.495832 },
+    position: { lat: 8.955931551476562, lng: 125.53574221350537 },
     type: 'Infrastructure',
     description: 'Broken water pipe affecting Langihan Road',
     priority: 'Critical',
@@ -17,7 +17,7 @@ export const reportMarkersDummy = [
   },
   {
     id: 'RPT-003',
-    position: { lat: 8.940823, lng: 125.517429 },
+    position: { lat: 8.944006185805133, lng: 125.54282709404029 },
     type: 'Road Issues',
     description: 'Damaged road sign near Butuan National High School',
     priority: 'Medium',
@@ -25,7 +25,7 @@ export const reportMarkersDummy = [
   },
   {
     id: 'RPT-004',
-    position: { lat: 8.915632, lng: 125.489157 },
+    position: { lat: 8.943491066582817, lng: 125.54029369183264 },
     type: 'Infrastructure',
     description: 'Cracked pavement on Montilla Boulevard',
     priority: 'Low',
@@ -33,7 +33,7 @@ export const reportMarkersDummy = [
   },
   {
     id: 'RPT-005',
-    position: { lat: 8.933821, lng: 125.512638 },
+    position: { lat: 8.93851432564583, lng: 125.53787781369444 },
     type: 'Road Issues',
     description: 'Traffic light malfunction at Rizal Street intersection',
     priority: 'High',
@@ -41,7 +41,7 @@ export const reportMarkersDummy = [
   },
   {
     id: 'RPT-006',
-    position: { lat: 8.925174, lng: 125.501832 },
+    position: { lat: 8.947400079950432, lng: 125.54311413291157 },
     type: 'Infrastructure',
     description: 'Damaged sidewalk near Guingona Park',
     priority: 'Medium',
@@ -49,15 +49,15 @@ export const reportMarkersDummy = [
   },
   {
     id: 'RPT-007',
-    position: { lat: 8.931456, lng: 125.507291 },
+    position: { lat: 8.947625439503982, lng: 125.54115855380742 },
     type: 'Road Issues',
-    description: 'Flooded area on San Mateo Street during rain',
+    description: 'Flooded area on 420 Agusan-Misamis Oriental Rd during rain',
     priority: 'High',
     status: 'In Progress',
   },
   {
     id: 'RPT-008',
-    position: { lat: 8.922385, lng: 125.498745 },
+    position: { lat: 8.948828698539703, lng: 125.54226339472731 },
     type: 'Infrastructure',
     description: 'Broken streetlight on P. Burgos Street',
     priority: 'Medium',
