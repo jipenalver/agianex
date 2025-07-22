@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { GoogleMap, AdvancedMarker } from 'vue3-google-map'
 import { getMarkerColor, getStatusIcon, reportMarkersDummy } from './mapsWidget'
+import { GoogleMap, AdvancedMarker } from 'vue3-google-map'
 import { computed, ref, watchEffect } from 'vue'
 import { useGeolocation } from '@vueuse/core'
 
@@ -292,6 +292,22 @@ const isMarkerExpanded = (reportId: string) => {
   max-width: 140px;
   cursor: pointer;
   transition: all 0.3s ease;
+  position: relative;
+  margin-bottom: 10px;
+}
+
+.report-marker::after {
+  content: '';
+  position: absolute;
+  bottom: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 10px solid transparent;
+  border-right: 10px solid transparent;
+  border-top: 10px solid;
+  border-top-color: inherit;
 }
 
 .report-marker.expanded {
@@ -302,6 +318,10 @@ const isMarkerExpanded = (reportId: string) => {
 .report-marker:hover {
   transform: scale(1.05);
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
+}
+
+.report-marker:hover::after {
+  transform: translateX(-50%) scale(1.05);
 }
 
 .marker-header {
@@ -384,16 +404,35 @@ const isMarkerExpanded = (reportId: string) => {
 .report-marker[style*='#f44336'] .marker-header {
   background-color: #f44336;
 }
+.report-marker[style*='#f44336']::after {
+  border-top-color: #f44336;
+}
+
 .report-marker[style*='#ff9800'] .marker-header {
   background-color: #ff9800;
 }
+.report-marker[style*='#ff9800']::after {
+  border-top-color: #ff9800;
+}
+
 .report-marker[style*='#2196f3'] .marker-header {
   background-color: #2196f3;
 }
+.report-marker[style*='#2196f3']::after {
+  border-top-color: #2196f3;
+}
+
 .report-marker[style*='#4caf50'] .marker-header {
   background-color: #4caf50;
 }
+.report-marker[style*='#4caf50']::after {
+  border-top-color: #4caf50;
+}
+
 .report-marker[style*='#9e9e9e'] .marker-header {
   background-color: #9e9e9e;
+}
+.report-marker[style*='#9e9e9e']::after {
+  border-top-color: #9e9e9e;
 }
 </style>
