@@ -6,6 +6,7 @@ import DashboardView from '@/views/system/dashboard/DashboardView.vue'
 import SettingsView from '@/views/system/settings/SettingsView.vue'
 import UserRolesView from '@/views/system/admin/manage-users/UserRolesView.vue'
 import UsersView from '@/views/system/admin/manage-users/UsersView.vue'
+import ReportView from '@/views/user/ReportView.vue'
 
 export const routes = [
   // Auth
@@ -36,7 +37,7 @@ export const routes = [
     meta: { requiresAuth: true, isDefault: true },
   },
 
-  // Users
+  // Admin
   {
     path: '/admin/users/roles',
     name: 'admin-users-roles',
@@ -47,6 +48,14 @@ export const routes = [
     path: '/admin/users/list',
     name: 'admin-users-list',
     component: UsersView,
+    meta: { requiresAuth: true },
+  },
+
+  // Users
+  {
+    path: '/user/report',
+    name: 'user-report',
+    component: ReportView,
     meta: { requiresAuth: true },
   },
 
