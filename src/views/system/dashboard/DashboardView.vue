@@ -21,6 +21,10 @@ const isDrawerVisible = ref(xs.value ? false : true)
       <v-container fluid>
         <v-row>
           <v-col cols="12">
+            <WelcomeWidget></WelcomeWidget>
+          </v-col>
+
+          <v-col cols="12">
             <MapWidget></MapWidget>
           </v-col>
         </v-row>
