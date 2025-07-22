@@ -15,6 +15,7 @@ const { coords, locatedAt, resume, pause } = useGeolocation({
 })
 
 // Load Variables
+const apiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY
 const defaultLatLng = { lat: 8.9556151, lng: 125.5978901 } // CSU Coords
 const isTrackingPause = ref(false)
 const mapZoom = ref(15)
@@ -110,7 +111,7 @@ const onTrackingPause = () => {
         <v-card-text>
           <GoogleMap
             id="map"
-            api-key="AIzaSyBiyf0K2SL3k9iXh7cKB4mB7eo3g4jd39k"
+            :api-key="apiKey"
             :center="center"
             :zoom="mapZoom"
             map-id="DEMO_MAP_ID"
@@ -118,9 +119,7 @@ const onTrackingPause = () => {
             <!-- <Marker :options="{ position: marker }" /> -->
             <AdvancedMarker :options="markerOptions">
               <template #content>
-                <div style="background: white; color: black; padding: 5px; border-radius: 5px">
-                  You are here!
-                </div>
+                <div id="marker">You are here!</div>
               </template>
             </AdvancedMarker>
           </GoogleMap>
@@ -140,5 +139,12 @@ const onTrackingPause = () => {
 #map {
   width: 100%;
   height: 70dvh;
+}
+
+#marker {
+  background: white;
+  color: black;
+  padding: 5px;
+  border-radius: 5px;
 }
 </style>
