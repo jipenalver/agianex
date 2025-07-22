@@ -89,6 +89,7 @@ const onTrackingPause = () => {
     <v-col cols="12" lg="9">
       <v-card
         class="border-md border-solid border-opacity-100 border-primary"
+        elevation="8"
         title="Citizen Report"
       >
         <template #subtitle>
