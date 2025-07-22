@@ -1,4 +1,3 @@
-import HomeView from '@/views/landing/HomeView.vue'
 import LoginView from '@/views/auth/LoginView.vue'
 import RegisterView from '@/views/auth/RegisterView.vue'
 import ForbiddenView from '@/views/errors/ForbiddenView.vue'
@@ -9,17 +8,9 @@ import UserRolesView from '@/views/system/admin/manage-users/UserRolesView.vue'
 import UsersView from '@/views/system/admin/manage-users/UsersView.vue'
 
 export const routes = [
-  // Landing
-  {
-    path: '/',
-    name: 'home',
-    component: HomeView,
-    meta: { requiresAuth: false },
-  },
-
   // Auth
   {
-    path: '/login',
+    path: '/',
     name: 'login',
     component: LoginView,
     meta: { requiresAuth: false },
