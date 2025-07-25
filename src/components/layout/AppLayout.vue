@@ -3,7 +3,7 @@ import TopProfileNavigation from '@/components/navigation/TopProfileNavigation.v
 import LogoAgianexDark from '@/assets/logos/logo-agianex-v2-dark.png'
 import BottomNavigation from '../navigation/BottomNavigation.vue'
 import LogoAgianex from '@/assets/logos/logo-agianex-v2.png'
-import imageBg from '@/assets/images/img-bxu-hall.jpg'
+import imageBg from '@/assets/images/img-bxu-night-blur.jpg'
 import { useAuthUserStore } from '@/stores/authUser'
 import { onMounted, ref } from 'vue'
 import { useDisplay } from 'vuetify'
