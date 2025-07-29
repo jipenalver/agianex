@@ -1,9 +1,11 @@
 <script setup lang="ts">
+import { useAuthUserStore } from '@/stores/authUser'
 import { reportsDummy } from './reportsTable'
 import { useDisplay } from 'vuetify'
 import { ref } from 'vue'
 
 const { mobile } = useDisplay()
+const authUserData = useAuthUserStore()
 
 // Dummy data for citizen reports
 const reports = ref([...reportsDummy])
@@ -18,7 +20,9 @@ const headers = [
   { title: 'Priority', key: 'priority', sortable: true },
   { title: 'Status', key: 'status', sortable: true },
   { title: 'Date', key: 'dateSubmitted', sortable: true },
-  { title: 'Actions', key: 'actions', sortable: false },
+  ...(authUserData.userRole !== 'User'
+    ? [{ title: 'Actions', key: 'actions', sortable: false }]
+    : []),
 ]
 
 // Status colors
@@ -102,19 +106,9 @@ const getPriorityColor = (priority: string) => {
         <!-- Custom slot for actions column -->
         <template #item.actions="{}">
           <div class="d-flex" :class="mobile ? 'justify-end' : 'justify-center'">
-            <v-btn icon="mdi-eye" size="small" variant="text" color="primary">
-              <v-icon>mdi-eye</v-icon>
-              <v-tooltip activator="parent" location="top"> View Details </v-tooltip>
-            </v-btn>
-
             <v-btn icon="mdi-pencil" size="small" variant="text" color="warning">
               <v-icon>mdi-pencil</v-icon>
               <v-tooltip activator="parent" location="top"> Edit Report </v-tooltip>
-            </v-btn>
-
-            <v-btn icon="mdi-map-marker" size="small" variant="text" color="info">
-              <v-icon>mdi-map-marker</v-icon>
-              <v-tooltip activator="parent" location="top"> View on Map </v-tooltip>
             </v-btn>
           </div>
         </template>
