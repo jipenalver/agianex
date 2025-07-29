@@ -65,7 +65,7 @@ const activeTab = ref('reports')
           <template v-else>
             <v-col cols="12">
               <v-row dense>
-                <v-col cols="12" sm="6">
+                <v-col cols="12">
                   <WelcomeWidget></WelcomeWidget>
                 </v-col>
 
