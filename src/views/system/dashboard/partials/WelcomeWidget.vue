@@ -12,11 +12,11 @@ const authUserStore = useAuthUserStore()
   <v-card
     class="border-md border-solid border-opacity-100 border-primary"
     elevation="8"
-    min-height="135"
+    min-height=""
   >
     <v-card-text>
       <v-row>
-        <v-col class="order-2 order-sm-1 pa-4" cols="12" lg="9" sm="9">
+        <v-col class="order-2 order-sm-1 pa-4" cols="12" lg="7" sm="9">
           <h2 class="text-h5" :class="xs ? 'text-center' : ''">
             Welcome aboard,
             <b class="font-weight-bold">
@@ -41,8 +41,14 @@ const authUserStore = useAuthUserStore()
           </p>
         </v-col>
 
-        <v-col class="order-1 order-sm-2" cols="12" lg="3" sm="3">
-          <v-img class="mx-auto" max-width="225" :src="MiscWelcomeJohn"></v-img>
+        <v-col
+          v-if="authUserStore.userRole !== 'User'"
+          class="order-1 order-sm-2"
+          cols="12"
+          lg="5"
+          sm="3"
+        >
+          <v-img class="mx-auto" max-width="400" :src="MiscWelcomeJohn"></v-img>
         </v-col>
       </v-row>
     </v-card-text>

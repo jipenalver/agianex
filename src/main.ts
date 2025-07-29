@@ -25,6 +25,11 @@ import { createFont } from './utils/vuetify/font'
 
 createFont()
 
+// PWA Elements
+import { defineCustomElements } from '@ionic/pwa-elements/loader'
+
+defineCustomElements(window)
+
 const app = createApp(App)
 
 const vuetify = createVuetify({

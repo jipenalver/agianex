@@ -74,7 +74,7 @@ export const useAuthUserStore = defineStore('authUser', () => {
 
   async function updateUserImage(file: File) {
     const { data, error } = await supabase.storage
-      .from('czarles')
+      .from('agianex')
       .upload('avatars/' + userData.value?.id + '-avatar.png', file, {
         cacheControl: '3600',
         upsert: true,
@@ -82,7 +82,7 @@ export const useAuthUserStore = defineStore('authUser', () => {
 
     if (error) return { data, error }
 
-    const { data: imageData } = supabase.storage.from('czarles').getPublicUrl(data.path)
+    const { data: imageData } = supabase.storage.from('agianex').getPublicUrl(data.path)
 
     return { data: imageData, error: null }
   }

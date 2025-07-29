@@ -1,0 +1,134 @@
+/* Global PWA Camera styles to ensure it appears above all Vuetify components */
+.pwa-camera-modal,
+.capacitor-camera-preview {
+  z-index: 99999 !important;
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  background: black !important;
+}
+
+.pwa-camera-preview,
+.capacitor-camera-preview video {
+  z-index: 99999 !important;
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  object-fit: cover !important;
+}
+
+.pwa-camera-controls,
+.capacitor-camera-controls {
+  z-index: 100000 !important;
+  position: fixed !important;
+  bottom: 2rem !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  display: flex !important;
+  gap: 1rem !important;
+  padding: 1rem !important;
+  background: rgba(0, 0, 0, 0.8) !important;
+  border-radius: 2rem !important;
+}
+
+.pwa-camera-button,
+.capacitor-camera-button {
+  z-index: 100001 !important;
+  width: 60px !important;
+  height: 60px !important;
+  border-radius: 50% !important;
+  border: 3px solid white !important;
+  background: rgba(255, 255, 255, 0.2) !important;
+  color: white !important;
+  font-size: 24px !important;
+  cursor: pointer !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  transition: background 0.2s !important;
+}
+
+.pwa-camera-button:hover,
+.capacitor-camera-button:hover {
+  background: rgba(255, 255, 255, 0.4) !important;
+}
+
+.pwa-camera-button:active,
+.capacitor-camera-button:active {
+  background: rgba(255, 255, 255, 0.6) !important;
+}
+
+/* Hide/Lower z-index of Vuetify components when camera is active */
+.camera-active .v-app-bar {
+  z-index: 1 !important;
+}
+
+.camera-active .v-footer {
+  z-index: 1 !important;
+}
+
+.camera-active .v-navigation-drawer {
+  z-index: 1 !important;
+}
+
+.camera-active .v-dialog {
+  z-index: 1 !important;
+}
+
+.camera-active .v-overlay {
+  z-index: 1 !important;
+}
+
+.camera-active .v-menu {
+  z-index: 1 !important;
+}
+
+/* Capacitor Camera specific styles */
+.capacitor-camera-wrap {
+  z-index: 99999 !important;
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+}
+
+/* Camera preview container */
+.camera-preview-container {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  z-index: 99999 !important;
+  background: black !important;
+}
+
+/* Camera input fallback styles */
+input[type='file'][accept*='image'] {
+  z-index: 100000 !important;
+}
+
+/* Ensure PWA install prompt doesn't interfere */
+.pwa-install-prompt {
+  z-index: 1 !important;
+}
+
+/* Override any conflicting z-index values */
+.v-application {
+  position: relative !important;
+}
+
+.camera-active .v-application > * {
+  z-index: 1 !important;
+}
+
+.camera-active .pwa-camera-modal,
+.camera-active .capacitor-camera-preview,
+.camera-active .camera-preview-container {
+  z-index: 99999 !important;
+}

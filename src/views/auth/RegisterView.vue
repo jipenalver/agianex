@@ -22,10 +22,6 @@ const onToggleTheme = () => {
       <v-container>
         <v-row class="d-flex justify-center">
           <v-col cols="12" xl="4" lg="5" sm="8">
-            <RouterLink class="text-decoration-none mt-16" to="/">
-              <h1 class="text-h2 font-weight-black text-black text-center">AGIANEX</h1>
-            </RouterLink>
-
             <v-card
               class="mx-auto pa-8 mt-4 border-md border-solid border-opacity-100 border-primary"
               elevation="8"

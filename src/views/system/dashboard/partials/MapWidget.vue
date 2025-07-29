@@ -1,74 +1,72 @@
 <script setup lang="ts">
-import { getMarkerColor, getStatusIcon, reportMarkersDummy } from './mapsWidget'
+import { getMarkerColor, getStatusIcon } from './mapWidget'
 import { GoogleMap, AdvancedMarker } from 'vue3-google-map'
-import { computed, ref, watchEffect } from 'vue'
-import { useGeolocation } from '@vueuse/core'
-
-// Utilize pre-defined vue functions; GeoLocation
-const { coords, locatedAt, resume, pause } = useGeolocation({
-  enableHighAccuracy: true,
-  timeout: 10000,
-  maximumAge: 0,
-})
+import { useReportsStore } from '@/stores/reports'
+import { useMapFilters } from './mapFilters'
+import { computed, ref } from 'vue'
 
 // Load Variables
+const mapZoom = ref(12)
 const apiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY
 const defaultLatLng = { lat: 8.928979, lng: 125.5035561 } // Butuan City Center
-const isTrackingPause = ref(false)
-const mapZoom = ref(15)
 
-// Dummy report markers data scattered within Butuan City
-const reportMarkers = ref([...reportMarkersDummy])
+// Reports store
+const reportsStore = useReportsStore()
 
-// Computed center for the map
-const center = computed(() => {
-  if (isTrackingPause.value) return defaultLatLng
+// Map filters
+const { filters, reportTypeOptions, statusOptions, priorityOptions, applyFilters, clearFilters } =
+  useMapFilters()
 
-  if (
-    coords.value.latitude !== Number.POSITIVE_INFINITY &&
-    coords.value.longitude !== Number.POSITIVE_INFINITY
-  )
-    return { lat: coords.value.latitude, lng: coords.value.longitude }
+// State to track if filters are applied
+const filtersApplied = ref(false)
 
-  return defaultLatLng
+// Loading state for refresh
+const refreshing = ref(false)
+
+// Computed filtered reports
+const filteredReports = computed(() => {
+  if (filtersApplied.value) {
+    return applyFilters(reportsStore.reports)
+  }
+  return reportsStore.reports
 })
 
-// Marker options as ref state
-const markerOptions = ref({
-  position: center.value,
-  title: 'You are Here!',
-})
-
-// Watch center changes to update markerOptions position and zoom
-watchEffect(() => {
-  // Update marker position
-  markerOptions.value.position = center.value
-
-  // Update zoom when location is found and tracking is active
-  if (
-    !isTrackingPause.value &&
-    coords.value.latitude !== Number.POSITIVE_INFINITY &&
-    coords.value.longitude !== Number.POSITIVE_INFINITY
-  ) {
-    mapZoom.value = 17
-  }
-})
-
-// Toggle Geolocation Tracking
-const onTrackingPause = () => {
-  isTrackingPause.value = !isTrackingPause.value
-
-  // Pause Tracking
-  if (isTrackingPause.value) {
-    pause()
-    mapZoom.value = 15
-  }
-  // Resume Tracking
-  else {
-    resume()
-    mapZoom.value = 17
-  }
+// Apply filters function
+const handleApplyFilters = () => {
+  filtersApplied.value = true
 }
+
+// Clear filters function
+const handleClearFilters = () => {
+  clearFilters()
+  filtersApplied.value = false
+}
+
+// Convert reports to markers format
+const reportMarkers = computed(() => {
+  return filteredReports.value.map((report) => {
+    // Use actual coordinates if available, otherwise use default Butuan City area
+    const lat = report.latitude
+      ? parseFloat(report.latitude)
+      : 8.928979 + (Math.random() - 0.5) * 0.1
+    const lng = report.longitude
+      ? parseFloat(report.longitude)
+      : 125.5035561 + (Math.random() - 0.5) * 0.1
+
+    return {
+      id: report.id.toString(),
+      type: report.type,
+      description: report.description,
+      priority: report.priority,
+      status: report.status,
+      citizen: report.citizen,
+      location: report.location,
+      image_path: report.image_path,
+      dateSubmitted: report.dateSubmitted,
+      position: { lat, lng },
+    }
+  })
+})
 
 // Marker expansion state
 const expandedMarkers = ref<Set<string>>(new Set())
@@ -86,6 +84,32 @@ const toggleMarker = (reportId: string) => {
 const isMarkerExpanded = (reportId: string) => {
   return expandedMarkers.value.has(reportId)
 }
+
+// Handle image load errors
+const onImageError = (event: Event) => {
+  const img = event.target as HTMLImageElement
+  img.style.display = 'none'
+  console.log('Failed to load image:', img.src)
+}
+
+// Refresh map data
+const refreshMap = async () => {
+  try {
+    refreshing.value = true
+
+    // Refresh reports data from the store
+    await reportsStore.refreshReports()
+
+    // Clear any expanded markers to reset the view
+    expandedMarkers.value.clear()
+
+    console.log('Map refreshed with updated reports data')
+  } catch (error) {
+    console.error('Error refreshing map:', error)
+  } finally {
+    refreshing.value = false
+  }
+}
 </script>
 
 <template>
@@ -95,88 +119,104 @@ const isMarkerExpanded = (reportId: string) => {
         class="border-md border-solid border-opacity-100 border-primary"
         elevation="8"
         title="Citizen Report"
+        subtitle="Real-time citizen reports on the map"
       >
-        <template #subtitle>
-          <div class="text-wrap">
-            {{ `LatLng: ${coords.latitude}, ${coords.longitude}` }} <br />
-            {{ `Date/Time: ${new Date(locatedAt as number).toLocaleString()}` }}
-          </div>
-        </template>
-
         <template #append>
-          <v-btn @click="onTrackingPause" variant="text" icon>
-            <v-icon :icon="isTrackingPause ? 'mdi-refresh' : 'mdi-pause'"></v-icon>
+          <v-btn
+            variant="text"
+            icon
+            @click="refreshMap"
+            :loading="refreshing"
+            :disabled="refreshing"
+          >
+            <v-icon icon="mdi-refresh"></v-icon>
 
-            <v-tooltip activator="parent" location="top">
-              {{ isTrackingPause ? 'Resume Tracking' : 'Pause Tracking' }}
-            </v-tooltip>
+            <v-tooltip activator="parent" location="top"> Refresh Map </v-tooltip>
           </v-btn>
         </template>
 
         <v-card-text>
-          <GoogleMap
-            id="map"
-            :api-key="apiKey"
-            :center="center"
-            :zoom="mapZoom"
-            map-id="DEMO_MAP_ID"
-          >
-            <!-- User Location Marker -->
-            <AdvancedMarker :options="markerOptions">
-              <template #content>
-                <div id="user-marker">📍 You are here!</div>
-              </template>
-            </AdvancedMarker>
-
-            <!-- Report Markers -->
-            <AdvancedMarker
-              v-for="report in reportMarkers"
-              :key="report.id"
-              :options="{ position: report.position }"
+          <!-- Loading state -->
+          <div v-if="reportsStore.loading" class="text-center pa-8">
+            <v-progress-circular indeterminate color="primary" size="48"></v-progress-circular>
+            <div class="text-h6 mt-4">Loading Reports...</div>
+          </div>
+          <!-- Map Container -->
+          <div v-else style="height: 495px; width: 100%">
+            <GoogleMap
+              id="map"
+              :api-key="apiKey"
+              :center="defaultLatLng"
+              :zoom="mapZoom"
+              map-id="DEMO_MAP_ID"
+              style="height: 100%; width: 100%"
             >
-              <template #content>
-                <div
-                  class="report-marker"
-                  :class="{ expanded: isMarkerExpanded(report.id) }"
-                  :style="{ backgroundColor: getMarkerColor(report.priority) }"
-                  @click="toggleMarker(report.id)"
-                >
-                  <div class="marker-header">
-                    <span class="status-icon">{{ getStatusIcon(report.status) }}</span>
-                    <span class="report-id">{{ report.id }}</span>
-                    <span class="expand-icon">{{ isMarkerExpanded(report.id) ? '▼' : '▶' }}</span>
+              <!-- Report Markers -->
+              <AdvancedMarker
+                v-for="report in reportMarkers"
+                :key="report.id"
+                :options="{ position: report.position }"
+              >
+                <template #content>
+                  <div
+                    class="report-marker"
+                    :class="{ expanded: isMarkerExpanded(report.id) }"
+                    :style="{ backgroundColor: getMarkerColor(report.priority) }"
+                    @click="toggleMarker(report.id)"
+                  >
+                    <div class="marker-header">
+                      <span class="status-icon">{{ getStatusIcon(report.status) }}</span>
+                      <span class="report-id">RPT-{{ report.id }}</span>
+                      <span class="expand-icon">{{
+                        isMarkerExpanded(report.id) ? '▼' : '▶'
+                      }}</span>
+                    </div>
+                    <div v-if="isMarkerExpanded(report.id)" class="marker-content">
+                      <div class="report-citizen">By: {{ report.citizen }}</div>
+                      <div class="report-type">{{ report.type }}</div>
+                      <div class="report-description">{{ report.description }}</div>
+                      <div class="report-location">📍 {{ report.location }}</div>
+
+                      <!-- Report Image -->
+                      <div v-if="report.image_path" class="report-image-container">
+                        <img
+                          :src="report.image_path"
+                          :alt="`Report ${report.id} image`"
+                          class="report-image"
+                          @error="onImageError"
+                        />
+                      </div>
+
+                      <div class="report-priority">Priority: {{ report.priority }}</div>
+                      <div class="report-status">Status: {{ report.status }}</div>
+                      <div class="report-date">
+                        {{ new Date(report.dateSubmitted).toLocaleDateString() }}
+                      </div>
+                    </div>
                   </div>
-                  <div v-if="isMarkerExpanded(report.id)" class="marker-content">
-                    <div class="report-type">{{ report.type }}</div>
-                    <div class="report-description">{{ report.description }}</div>
-                    <div class="report-priority">Priority: {{ report.priority }}</div>
-                    <div class="report-status">Status: {{ report.status }}</div>
-                  </div>
-                </div>
-              </template>
-            </AdvancedMarker>
-          </GoogleMap>
+                </template>
+              </AdvancedMarker>
+            </GoogleMap>
+          </div>
         </v-card-text>
       </v-card>
     </v-col>
 
     <v-col cols="12" lg="3">
-      <v-card class="border-md border-solid border-opacity-100 border-primary" title="Filters">
+      <v-card
+        class="border-md border-solid border-opacity-100 border-primary"
+        title="Filters"
+        subtitle="Filter reports by type, status, and priority"
+      >
         <v-card-text>
           <v-row dense>
             <!-- Report Type Filter -->
             <v-col cols="12">
               <v-select
+                class="mt-3"
+                v-model="filters.reportType"
                 label="Report Type"
-                :items="[
-                  'All Reports',
-                  'Road Issues',
-                  'Public Safety',
-                  'Infrastructure',
-                  'Environmental',
-                  'Utilities',
-                  'Public Transport',
-                ]"
+                :items="reportTypeOptions"
                 variant="outlined"
                 density="compact"
               ></v-select>
@@ -185,8 +225,10 @@ const isMarkerExpanded = (reportId: string) => {
             <!-- Status Filter -->
             <v-col cols="12">
               <v-select
+                class="mt-3"
+                v-model="filters.status"
                 label="Status"
-                :items="['All Status', 'Pending', 'In Progress', 'Resolved', 'Rejected']"
+                :items="statusOptions"
                 variant="outlined"
                 density="compact"
               ></v-select>
@@ -195,8 +237,10 @@ const isMarkerExpanded = (reportId: string) => {
             <!-- Priority Filter -->
             <v-col cols="12">
               <v-select
+                class="mt-3"
+                v-model="filters.priority"
                 label="Priority"
-                :items="['All Priorities', 'Low', 'Medium', 'High', 'Critical']"
+                :items="priorityOptions"
                 variant="outlined"
                 density="compact"
               ></v-select>
@@ -205,6 +249,8 @@ const isMarkerExpanded = (reportId: string) => {
             <!-- Date Range -->
             <v-col cols="12">
               <v-text-field
+                class="mt-3"
+                v-model="filters.fromDate"
                 label="From Date"
                 type="date"
                 variant="outlined"
@@ -214,6 +260,8 @@ const isMarkerExpanded = (reportId: string) => {
 
             <v-col cols="12">
               <v-text-field
+                class="mt-3"
+                v-model="filters.toDate"
                 label="To Date"
                 type="date"
                 variant="outlined"
@@ -221,44 +269,28 @@ const isMarkerExpanded = (reportId: string) => {
               ></v-text-field>
             </v-col>
 
-            <!-- Location Radius -->
-            <v-col cols="12">
-              <v-slider
-                label="Search Radius (km)"
-                :min="1"
-                :max="50"
-                :step="1"
-                :model-value="10"
-                show-ticks="always"
-                tick-size="4"
-              >
-                <template #append>
-                  <v-text-field
-                    :model-value="10"
-                    type="number"
-                    style="width: 80px"
-                    density="compact"
-                    variant="outlined"
-                    hide-details
-                  ></v-text-field>
-                </template>
-              </v-slider>
-            </v-col>
-
-            <!-- Show My Reports Only -->
-            <v-col cols="12">
-              <v-checkbox label="Show my reports only" density="compact"></v-checkbox>
-            </v-col>
-
             <!-- Filter Actions -->
             <v-col cols="12">
-              <v-btn color="primary" variant="elevated" block prepend-icon="mdi-filter">
+              <v-btn
+                @click="handleApplyFilters"
+                color="primary"
+                variant="elevated"
+                block
+                prepend-icon="mdi-filter"
+              >
                 Apply Filters
               </v-btn>
             </v-col>
 
             <v-col cols="12">
-              <v-btn variant="outlined" block prepend-icon="mdi-filter-off"> Clear Filters </v-btn>
+              <v-btn
+                @click="handleClearFilters"
+                variant="outlined"
+                block
+                prepend-icon="mdi-filter-off"
+              >
+                Clear Filters
+              </v-btn>
             </v-col>
           </v-row>
         </v-card-text>
@@ -268,186 +300,5 @@ const isMarkerExpanded = (reportId: string) => {
 </template>
 
 <style scoped>
-#map {
-  width: 100%;
-  height: 59dvh;
-}
-
-#user-marker {
-  background: #2196f3;
-  color: white;
-  padding: 8px 12px;
-  border-radius: 20px;
-  font-weight: bold;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-  border: 2px solid white;
-  position: relative;
-  margin-bottom: 10px;
-}
-
-#user-marker::after {
-  content: '';
-  position: absolute;
-  bottom: -10px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 0;
-  height: 0;
-  border-left: 10px solid transparent;
-  border-right: 10px solid transparent;
-  border-top: 10px solid #2196f3;
-}
-
-.report-marker {
-  background: white;
-  border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-  border: 2px solid;
-  min-width: 120px;
-  max-width: 140px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  position: relative;
-  margin-bottom: 10px;
-}
-
-.report-marker::after {
-  content: '';
-  position: absolute;
-  bottom: -10px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 0;
-  height: 0;
-  border-left: 10px solid transparent;
-  border-right: 10px solid transparent;
-  border-top: 10px solid;
-  border-top-color: inherit;
-}
-
-.report-marker.expanded {
-  min-width: 200px;
-  max-width: 250px;
-}
-
-.report-marker:hover {
-  transform: scale(1.05);
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
-}
-
-.report-marker:hover::after {
-  transform: translateX(-50%) scale(1.05);
-}
-
-.marker-header {
-  padding: 8px;
-  color: white;
-  font-weight: bold;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  border-radius: 6px 6px 0 0;
-}
-
-.report-marker:not(.expanded) .marker-header {
-  border-radius: 6px;
-}
-
-.status-icon {
-  font-size: 16px;
-}
-
-.report-id {
-  font-size: 12px;
-  flex: 1;
-  text-align: center;
-}
-
-.expand-icon {
-  font-size: 10px;
-  transition: transform 0.3s ease;
-}
-
-.marker-content {
-  padding: 8px;
-  background: white;
-  border-radius: 0 0 6px 6px;
-  animation: slideDown 0.3s ease;
-}
-
-@keyframes slideDown {
-  from {
-    opacity: 0;
-    max-height: 0;
-    padding-top: 0;
-    padding-bottom: 0;
-  }
-  to {
-    opacity: 1;
-    max-height: 200px;
-    padding-top: 8px;
-    padding-bottom: 8px;
-  }
-}
-
-.report-type {
-  font-weight: bold;
-  color: #333;
-  margin-bottom: 4px;
-  font-size: 14px;
-}
-
-.report-description {
-  color: #666;
-  margin-bottom: 6px;
-  font-size: 12px;
-  line-height: 1.3;
-}
-
-.report-priority {
-  font-size: 11px;
-  font-weight: bold;
-  margin-bottom: 2px;
-}
-
-.report-status {
-  font-size: 11px;
-  color: #666;
-}
-
-/* Priority-based header colors */
-.report-marker[style*='#f44336'] .marker-header {
-  background-color: #f44336;
-}
-.report-marker[style*='#f44336']::after {
-  border-top-color: #f44336;
-}
-
-.report-marker[style*='#ff9800'] .marker-header {
-  background-color: #ff9800;
-}
-.report-marker[style*='#ff9800']::after {
-  border-top-color: #ff9800;
-}
-
-.report-marker[style*='#2196f3'] .marker-header {
-  background-color: #2196f3;
-}
-.report-marker[style*='#2196f3']::after {
-  border-top-color: #2196f3;
-}
-
-.report-marker[style*='#4caf50'] .marker-header {
-  background-color: #4caf50;
-}
-.report-marker[style*='#4caf50']::after {
-  border-top-color: #4caf50;
-}
-
-.report-marker[style*='#9e9e9e'] .marker-header {
-  background-color: #9e9e9e;
-}
-.report-marker[style*='#9e9e9e']::after {
-  border-top-color: #9e9e9e;
-}
+@import './map.css';
 </style>

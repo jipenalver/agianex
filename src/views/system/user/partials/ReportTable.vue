@@ -1,12 +1,23 @@
 <script setup lang="ts">
-import { reportsDummy } from './reportsTable'
+import AppAlert from '@/components/common/AppAlert.vue'
+import ReportsFormDialog from './ReportsFormDialog.vue'
+import type { ReportData } from '@/stores/reports'
+import { useReportsTable } from './reportsTable'
 import { useDisplay } from 'vuetify'
 import { ref } from 'vue'
 
 const { mobile } = useDisplay()
+const { tableOptions, formAction, onLoadItems, reportsStore, authUserStore } = useReportsTable()
 
-// Dummy data for citizen reports
-const reports = ref([...reportsDummy])
+// Dialog state
+const isDialogVisible = ref(false)
+const selectedReport = ref<ReportData | null>(null)
+
+// Open edit dialog
+const openEditDialog = (report: ReportData) => {
+  selectedReport.value = report
+  isDialogVisible.value = true
+}
 
 // Table headers
 const headers = [
@@ -18,7 +29,9 @@ const headers = [
   { title: 'Priority', key: 'priority', sortable: true },
   { title: 'Status', key: 'status', sortable: true },
   { title: 'Date', key: 'dateSubmitted', sortable: true },
-  { title: 'Actions', key: 'actions', sortable: false },
+  ...(authUserStore.userRole !== 'User'
+    ? [{ title: 'Actions', key: 'actions', sortable: false }]
+    : []),
 ]
 
 // Status colors
@@ -61,11 +74,23 @@ const getPriorityColor = (priority: string) => {
     elevation="8"
   >
     <v-card-text>
+      <!-- Alert for errors -->
+      <AppAlert
+        v-if="formAction.formAlert"
+        v-model:is-alert-visible="formAction.formAlert"
+        :form-message="formAction.formMessage"
+        :form-status="formAction.formStatus"
+      />
+
+      <!-- Data table with server-side pagination -->
       <!-- eslint-disable vue/valid-v-slot -->
-      <v-data-table
+      <v-data-table-server
         :headers="headers"
-        :items="reports"
-        :items-per-page="5"
+        :items="reportsStore.serverReports"
+        :items-length="reportsStore.totalServerReports"
+        :loading="tableOptions.isLoading"
+        :items-per-page="tableOptions.itemsPerPage"
+        @update:options="onLoadItems"
         class="elevation-1"
         :hide-default-header="mobile"
         :mobile="mobile"
@@ -100,21 +125,17 @@ const getPriorityColor = (priority: string) => {
         </template>
 
         <!-- Custom slot for actions column -->
-        <template #item.actions="{}">
+        <template #item.actions="{ item }">
           <div class="d-flex" :class="mobile ? 'justify-end' : 'justify-center'">
-            <v-btn icon="mdi-eye" size="small" variant="text" color="primary">
-              <v-icon>mdi-eye</v-icon>
-              <v-tooltip activator="parent" location="top"> View Details </v-tooltip>
-            </v-btn>
-
-            <v-btn icon="mdi-pencil" size="small" variant="text" color="warning">
+            <v-btn
+              @click="openEditDialog(item)"
+              icon="mdi-pencil"
+              size="small"
+              variant="text"
+              color="warning"
+            >
               <v-icon>mdi-pencil</v-icon>
               <v-tooltip activator="parent" location="top"> Edit Report </v-tooltip>
-            </v-btn>
-
-            <v-btn icon="mdi-map-marker" size="small" variant="text" color="info">
-              <v-icon>mdi-map-marker</v-icon>
-              <v-tooltip activator="parent" location="top"> View on Map </v-tooltip>
             </v-btn>
           </div>
         </template>
@@ -127,7 +148,14 @@ const getPriorityColor = (priority: string) => {
             <div class="text-caption">No citizen reports have been submitted yet.</div>
           </div>
         </template>
-      </v-data-table>
+      </v-data-table-server>
     </v-card-text>
   </v-card>
+
+  <!-- Edit Report Dialog -->
+  <ReportsFormDialog
+    v-model:is-dialog-visible="isDialogVisible"
+    :item-data="selectedReport"
+    :table-options="tableOptions"
+  />
 </template>
