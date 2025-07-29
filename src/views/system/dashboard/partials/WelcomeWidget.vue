@@ -24,7 +24,7 @@ const authUserStore = useAuthUserStore()
             </b>
           </h2>
 
-          <p class="mt-3 text-justify">
+          <p v-if="authUserStore.userRole === 'User'" class="mt-3 text-justify">
             <strong>Agianex</strong> is a comprehensive road infrastructure reporting platform that
             enables citizens and authorities to report, track, and manage road conditions and
             infrastructure issues. The application features Google Maps for precise location mapping
@@ -48,7 +48,7 @@ const authUserStore = useAuthUserStore()
           lg="3"
           sm="3"
         >
-          <v-img class="mx-auto" max-width="225" :src="MiscWelcomeJohn"></v-img>
+          <v-img class="mx-auto" max-width="150" :src="MiscWelcomeJohn"></v-img>
         </v-col>
       </v-row>
     </v-card-text>

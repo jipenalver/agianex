@@ -5,7 +5,6 @@ import { useReportsStore } from '@/stores/reports'
 import { computed, ref, watchEffect } from 'vue'
 import { useGeolocation } from '@vueuse/core'
 import { useMapFilters } from './mapFilters'
-import './map.css'
 
 // Utilize pre-defined vue functions; GeoLocation
 const { coords, locatedAt, resume, pause } = useGeolocation({
@@ -182,7 +181,7 @@ const onImageError = (event: Event) => {
             <div class="text-h6 mt-4">Loading Reports...</div>
           </div>
           <!-- Map Container -->
-          <div v-else style="height: 400px; width: 100%">
+          <div v-else style="height: 475px; width: 100%">
             <GoogleMap
               id="map"
               :api-key="apiKey"
@@ -250,12 +249,17 @@ const onImageError = (event: Event) => {
     </v-col>
 
     <v-col cols="12" lg="3">
-      <v-card class="border-md border-solid border-opacity-100 border-primary" title="Filters">
+      <v-card
+        class="border-md border-solid border-opacity-100 border-primary"
+        title="Filters"
+        subtitle="Filter reports by type, status, and priority"
+      >
         <v-card-text>
           <v-row dense>
             <!-- Report Type Filter -->
             <v-col cols="12">
               <v-select
+                class="mt-3"
                 v-model="filters.reportType"
                 label="Report Type"
                 :items="reportTypeOptions"
@@ -267,6 +271,7 @@ const onImageError = (event: Event) => {
             <!-- Status Filter -->
             <v-col cols="12">
               <v-select
+                class="mt-3"
                 v-model="filters.status"
                 label="Status"
                 :items="statusOptions"
@@ -278,6 +283,7 @@ const onImageError = (event: Event) => {
             <!-- Priority Filter -->
             <v-col cols="12">
               <v-select
+                class="mt-3"
                 v-model="filters.priority"
                 label="Priority"
                 :items="priorityOptions"
@@ -289,6 +295,7 @@ const onImageError = (event: Event) => {
             <!-- Date Range -->
             <v-col cols="12">
               <v-text-field
+                class="mt-3"
                 v-model="filters.fromDate"
                 label="From Date"
                 type="date"
@@ -299,6 +306,7 @@ const onImageError = (event: Event) => {
 
             <v-col cols="12">
               <v-text-field
+                class="mt-3"
                 v-model="filters.toDate"
                 label="To Date"
                 type="date"
@@ -336,3 +344,7 @@ const onImageError = (event: Event) => {
     </v-col>
   </v-row>
 </template>
+
+<style scoped>
+@import './map.css';
+</style>
