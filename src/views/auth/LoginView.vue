@@ -21,9 +21,7 @@ const onToggleTheme = () => {
       <v-container>
         <v-row class="d-flex justify-center">
           <v-col cols="12" xl="4" lg="5" sm="8">
-            <RouterLink class="text-decoration-none mt-16" to="/">
-              <h1 class="text-h2 font-weight-black text-black text-center">AGIANEX</h1>
-            </RouterLink>
+            <div class="my-16"></div>
 
             <v-card
               class="mx-auto pa-8 mt-4 border-md border-solid border-opacity-100 border-primary"
@@ -37,6 +35,17 @@ const onToggleTheme = () => {
               ></v-img>
 
               <LoginForm></LoginForm>
+
+              <v-card color="surface-variant" variant="tonal">
+                <v-card-text class="text-medium-emphasis text-caption">
+                  <p class="text-center">
+                    <strong>Agianex</strong> is a comprehensive road infrastructure reporting
+                    platform that enables citizens and authorities to report, track, and manage road
+                    conditions and infrastructure issues. The application features Google Maps for
+                    precise location mapping of road incidents and infrastructure problems.
+                  </p>
+                </v-card-text>
+              </v-card>
 
               <v-card-text class="text-center">
                 Don't have an account?
