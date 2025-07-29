@@ -10,7 +10,13 @@
     "build-only": "vite build",
     "type-check": "vue-tsc --build",
     "lint": "eslint . --fix",
-    "format": "prettier --write src/"
+    "format": "prettier --write src/",
+    "build:android": "npm run build && npx cap sync android",
+    "build:android:apk": "npm run build:android && cd android && ./gradlew assembleDebug",
+    "build:android:release": "npm run build:android && cd android && ./gradlew assembleRelease",
+    "cap:sync": "npx cap sync",
+    "cap:android": "npx cap open android",
+    "cap:ios": "npx cap open ios"
   },
   "dependencies": {
     "@capacitor/android": "7.4.2",
