@@ -3,7 +3,7 @@
   height: 59dvh;
 }
 
-#user-marker {
+:deep(#user-marker) {
   background: #2196f3;
   color: white;
   padding: 8px 12px;
@@ -15,7 +15,7 @@
   margin-bottom: 10px;
 }
 
-#user-marker::after {
+:deep(#user-marker::after) {
   content: '';
   position: absolute;
   bottom: -10px;
@@ -28,7 +28,7 @@
   border-top: 10px solid #2196f3;
 }
 
-.report-marker {
+:deep(.report-marker) {
   background: white;
   border-radius: 8px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
@@ -41,7 +41,7 @@
   margin-bottom: 10px;
 }
 
-.report-marker::after {
+:deep(.report-marker::after) {
   content: '';
   position: absolute;
   bottom: -10px;
@@ -55,21 +55,21 @@
   border-top-color: inherit;
 }
 
-.report-marker.expanded {
+:deep(.report-marker.expanded) {
   min-width: 200px;
   max-width: 250px;
 }
 
-.report-marker:hover {
+:deep(.report-marker:hover) {
   transform: scale(1.05);
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
 }
 
-.report-marker:hover::after {
+:deep(.report-marker:hover::after) {
   transform: translateX(-50%) scale(1.05);
 }
 
-.marker-header {
+:deep(.marker-header) {
   padding: 8px;
   color: white;
   font-weight: bold;
@@ -79,26 +79,26 @@
   border-radius: 6px 6px 0 0;
 }
 
-.report-marker:not(.expanded) .marker-header {
+:deep(.report-marker:not(.expanded) .marker-header) {
   border-radius: 6px;
 }
 
-.status-icon {
+:deep(.status-icon) {
   font-size: 16px;
 }
 
-.report-id {
+:deep(.report-id) {
   font-size: 12px;
   flex: 1;
   text-align: center;
 }
 
-.expand-icon {
+:deep(.expand-icon) {
   font-size: 10px;
   transition: transform 0.3s ease;
 }
 
-.marker-content {
+:deep(.marker-content) {
   padding: 8px;
   background: white;
   border-radius: 0 0 6px 6px;
@@ -120,76 +120,76 @@
   }
 }
 
-.report-type {
+:deep(.report-type) {
   font-weight: bold;
   color: #333;
   margin-bottom: 4px;
   font-size: 14px;
 }
 
-.report-description {
+:deep(.report-description) {
   color: #666;
   margin-bottom: 6px;
   font-size: 12px;
   line-height: 1.3;
 }
 
-.report-priority {
+:deep(.report-priority) {
   font-size: 11px;
   font-weight: bold;
   margin-bottom: 2px;
 }
 
-.report-status {
+:deep(.report-status) {
   font-size: 11px;
   color: #666;
 }
 
 /* Priority-based header colors */
-.report-marker[style*='#f44336'] .marker-header {
+:deep(.report-marker[style*='#f44336'] .marker-header) {
   background-color: #f44336;
 }
-.report-marker[style*='#f44336']::after {
+:deep(.report-marker[style*='#f44336']::after) {
   border-top-color: #f44336;
 }
 
-.report-marker[style*='#ff9800'] .marker-header {
+:deep(.report-marker[style*='#ff9800'] .marker-header) {
   background-color: #ff9800;
 }
-.report-marker[style*='#ff9800']::after {
+:deep(.report-marker[style*='#ff9800']::after) {
   border-top-color: #ff9800;
 }
 
-.report-marker[style*='#2196f3'] .marker-header {
+:deep(.report-marker[style*='#2196f3'] .marker-header) {
   background-color: #2196f3;
 }
-.report-marker[style*='#2196f3']::after {
+:deep(.report-marker[style*='#2196f3']::after) {
   border-top-color: #2196f3;
 }
 
-.report-marker[style*='#4caf50'] .marker-header {
+:deep(.report-marker[style*='#4caf50'] .marker-header) {
   background-color: #4caf50;
 }
-.report-marker[style*='#4caf50']::after {
+:deep(.report-marker[style*='#4caf50']::after) {
   border-top-color: #4caf50;
 }
 
-.report-marker[style*='#9e9e9e'] .marker-header {
+:deep(.report-marker[style*='#9e9e9e'] .marker-header) {
   background-color: #9e9e9e;
 }
-.report-marker[style*='#9e9e9e']::after {
+:deep(.report-marker[style*='#9e9e9e']::after) {
   border-top-color: #9e9e9e;
 }
 
 /* Report Image Styles */
-.report-image-container {
+:deep(.report-image-container) {
   margin: 8px 0;
   border-radius: 4px;
   overflow: hidden;
   max-width: 100%;
 }
 
-.report-image {
+:deep(.report-image) {
   width: 100%;
   max-width: 200px;
   height: auto;
@@ -201,6 +201,6 @@
   transition: transform 0.2s ease;
 }
 
-.report-image:hover {
+:deep(.report-image:hover) {
   transform: scale(1.02);
 }
