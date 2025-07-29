@@ -34,6 +34,14 @@ interface RawReportData {
   created_at: string
 }
 
+// Interface for updating report data
+export interface UpdateReportData {
+  id: number
+  report_type?: string
+  priority?: string
+  status?: string
+}
+
 // Interface for report data
 export interface ReportData {
   id: number
@@ -191,6 +199,37 @@ export const useReportsStore = defineStore('reports', () => {
     return reports.value.filter((report) => report.user_id === userId)
   }
 
+  // Update report method
+  const updateReport = async (reportData: UpdateReportData) => {
+    try {
+      serverLoading.value = true
+      error.value = null
+
+      const { data, error: updateError } = await supabase
+        .from('reports')
+        .update({
+          report_type: reportData.report_type,
+          priority: reportData.priority,
+          status: reportData.status,
+        })
+        .eq('id', reportData.id)
+        .select()
+
+      if (updateError) {
+        throw new Error(`Error updating report: ${updateError.message}`)
+      }
+
+      return { data, error: null }
+    } catch (err) {
+      const errorMessage =
+        err instanceof Error ? err.message : 'An error occurred while updating the report'
+      error.value = errorMessage
+      return { data: null, error: errorMessage }
+    } finally {
+      serverLoading.value = false
+    }
+  }
+
   // Server-side pagination method
   const getReportsTable = async (options: TableOptions & { userId?: string }) => {
     try {
@@ -201,7 +240,7 @@ export const useReportsStore = defineStore('reports', () => {
       const offset = (page - 1) * itemsPerPage
 
       // Build query with pagination
-      let query = supabaseAdmin
+      let query = supabase
         .from('reports')
         .select('*', { count: 'exact' })
         .range(offset, offset + itemsPerPage - 1)
@@ -265,5 +304,6 @@ export const useReportsStore = defineStore('reports', () => {
     getReportsByPriority,
     getReportsByUser,
     getReportsTable,
+    updateReport,
   }
 })
