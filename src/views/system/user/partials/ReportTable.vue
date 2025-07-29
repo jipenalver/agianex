@@ -1,10 +1,23 @@
 <script setup lang="ts">
 import AppAlert from '@/components/common/AppAlert.vue'
+import ReportsFormDialog from './ReportsFormDialog.vue'
 import { useReportsTable } from './reportsTable'
 import { useDisplay } from 'vuetify'
+import { ref } from 'vue'
+import type { ReportData } from '@/stores/reports'
 
 const { mobile } = useDisplay()
 const { tableOptions, formAction, onLoadItems, reportsStore, authUserStore } = useReportsTable()
+
+// Dialog state
+const isDialogVisible = ref(false)
+const selectedReport = ref<ReportData | null>(null)
+
+// Open edit dialog
+const openEditDialog = (report: ReportData) => {
+  selectedReport.value = report
+  isDialogVisible.value = true
+}
 
 // Table headers
 const headers = [
@@ -112,9 +125,15 @@ const getPriorityColor = (priority: string) => {
         </template>
 
         <!-- Custom slot for actions column -->
-        <template #item.actions="{}">
+        <template #item.actions="{ item }">
           <div class="d-flex" :class="mobile ? 'justify-end' : 'justify-center'">
-            <v-btn icon="mdi-pencil" size="small" variant="text" color="warning">
+            <v-btn
+              @click="openEditDialog(item)"
+              icon="mdi-pencil"
+              size="small"
+              variant="text"
+              color="warning"
+            >
               <v-icon>mdi-pencil</v-icon>
               <v-tooltip activator="parent" location="top"> Edit Report </v-tooltip>
             </v-btn>
@@ -132,4 +151,11 @@ const getPriorityColor = (priority: string) => {
       </v-data-table-server>
     </v-card-text>
   </v-card>
+
+  <!-- Edit Report Dialog -->
+  <ReportsFormDialog
+    v-model:is-dialog-visible="isDialogVisible"
+    :item-data="selectedReport"
+    :table-options="tableOptions"
+  />
 </template>
