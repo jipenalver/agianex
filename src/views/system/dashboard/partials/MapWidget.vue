@@ -17,7 +17,7 @@ const { coords, locatedAt, resume, pause } = useGeolocation({
 const apiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY
 const defaultLatLng = { lat: 8.928979, lng: 125.5035561 } // Butuan City Center
 const isTrackingPause = ref(false)
-const mapZoom = ref(10)
+const mapZoom = ref(11)
 
 // Reports store
 const reportsStore = useReportsStore()
@@ -115,12 +115,12 @@ const onTrackingPause = () => {
   // Pause Tracking
   if (isTrackingPause.value) {
     pause()
-    mapZoom.value = 10
+    mapZoom.value = 11
   }
   // Resume Tracking
   else {
     resume()
-    mapZoom.value = 14
+    mapZoom.value = 13
   }
 }
 
@@ -191,11 +191,11 @@ const onImageError = (event: Event) => {
               style="height: 100%; width: 100%"
             >
               <!-- User Location Marker -->
-              <AdvancedMarker :options="markerOptions">
+              <!-- <AdvancedMarker :options="markerOptions">
                 <template #content>
                   <div id="user-marker">📍 You are here!</div>
                 </template>
-              </AdvancedMarker>
+              </AdvancedMarker> -->
 
               <!-- Report Markers -->
               <AdvancedMarker
