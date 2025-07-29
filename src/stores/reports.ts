@@ -70,6 +70,9 @@ export const useReportsStore = defineStore('reports', () => {
   const totalServerReports = ref(0)
   const serverLoading = ref(false)
 
+  // Realtime subscription state
+  let realtimeChannel: ReturnType<typeof supabase.channel> | null = null
+
   // Helper function to transform reports with user data
   const transformReportsWithUserData = async (
     reportsData: RawReportData[],
@@ -276,6 +279,133 @@ export const useReportsStore = defineStore('reports', () => {
     }
   }
 
+  // Realtime subscription methods
+  /**
+   * Subscribe to realtime changes on the reports table
+   * Listens for INSERT, UPDATE, and DELETE events
+   * Automatically updates the local store state
+   *
+   * Usage:
+   * - Call this in onMounted of components that need real-time updates
+   * - Don't forget to call unsubscribeFromReports() in onUnmounted
+   */
+  const subscribeToReports = async () => {
+    try {
+      // Unsubscribe from existing channel if any
+      if (realtimeChannel) {
+        await unsubscribeFromReports()
+      }
+
+      // Create a new channel for reports table
+      realtimeChannel = supabase
+        .channel('reports-changes')
+        .on(
+          'postgres_changes',
+          {
+            event: '*', // Listen to all events (INSERT, UPDATE, DELETE)
+            schema: 'public',
+            table: 'reports',
+          },
+          async (payload) => {
+            console.log('Realtime event:', payload)
+
+            switch (payload.eventType) {
+              case 'INSERT':
+                await handleReportInsert(payload.new as RawReportData)
+                break
+              case 'UPDATE':
+                await handleReportUpdate(payload.new as RawReportData)
+                break
+              case 'DELETE':
+                handleReportDelete(payload.old.id)
+                break
+            }
+          },
+        )
+        .subscribe((status) => {
+          console.log('Realtime subscription status:', status)
+        })
+    } catch (err) {
+      console.error('Error setting up realtime subscription:', err)
+    }
+  }
+
+  const unsubscribeFromReports = async () => {
+    if (realtimeChannel) {
+      await supabase.removeChannel(realtimeChannel)
+      realtimeChannel = null
+      console.log('Unsubscribed from reports realtime')
+    }
+  }
+
+  // Handle realtime events
+  const handleReportInsert = async (newReport: RawReportData) => {
+    try {
+      // Transform the new report with user data
+      const transformedReports = await transformReportsWithUserData([newReport])
+      const transformedReport = transformedReports[0]
+
+      // Add to the main reports array (at the beginning since it's newest)
+      reports.value.unshift(transformedReport)
+
+      // If we're showing paginated data and it's on the first page, add to serverReports too
+      if (serverReports.value.length > 0) {
+        serverReports.value.unshift(transformedReport)
+        // Remove the last item if we exceed the page size
+        if (serverReports.value.length > 10) {
+          // Assuming default page size of 10
+          serverReports.value.pop()
+        }
+        totalServerReports.value += 1
+      }
+
+      console.log('New report added via realtime:', transformedReport)
+    } catch (err) {
+      console.error('Error handling report insert:', err)
+    }
+  }
+
+  const handleReportUpdate = async (updatedReport: RawReportData) => {
+    try {
+      // Transform the updated report with user data
+      const transformedReports = await transformReportsWithUserData([updatedReport])
+      const transformedReport = transformedReports[0]
+
+      // Update in main reports array
+      const reportIndex = reports.value.findIndex((r) => r.id === updatedReport.id)
+      if (reportIndex !== -1) {
+        reports.value[reportIndex] = transformedReport
+      }
+
+      // Update in server reports array if it exists there
+      const serverReportIndex = serverReports.value.findIndex((r) => r.id === updatedReport.id)
+      if (serverReportIndex !== -1) {
+        serverReports.value[serverReportIndex] = transformedReport
+      }
+
+      console.log('Report updated via realtime:', transformedReport)
+    } catch (err) {
+      console.error('Error handling report update:', err)
+    }
+  }
+
+  const handleReportDelete = (reportId: number) => {
+    // Remove from main reports array
+    const reportIndex = reports.value.findIndex((r) => r.id === reportId)
+    if (reportIndex !== -1) {
+      reports.value.splice(reportIndex, 1)
+    }
+
+    // Remove from server reports array
+    const serverReportIndex = serverReports.value.findIndex((r) => r.id === reportId)
+    if (serverReportIndex !== -1) {
+      serverReports.value.splice(serverReportIndex, 1)
+      totalServerReports.value -= 1
+    }
+
+    console.log('Report deleted via realtime:', reportId)
+  }
+
   return {
     // State
     reports,
@@ -305,5 +435,9 @@ export const useReportsStore = defineStore('reports', () => {
     getReportsByUser,
     getReportsTable,
     updateReport,
+
+    // Realtime methods
+    subscribeToReports,
+    unsubscribeFromReports,
   }
 })
