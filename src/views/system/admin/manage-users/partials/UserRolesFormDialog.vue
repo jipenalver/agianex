@@ -1,10 +1,5 @@
 <script setup lang="ts">
-import {
-  adminNav,
-  adminItemsNav1,
-  adminItemsNav2,
-  adminItemsNav3,
-} from '@/components/navigation/sideNavigation'
+import { adminNav, adminItemsNav1, adminItemsNav2 } from '@/components/navigation/sideNavigation'
 import { useUserRolesFormDialog } from './userRolesFormDialog'
 import AppAlert from '@/components/common/AppAlert.vue'
 import { requiredValidator } from '@/utils/validators'
@@ -87,22 +82,6 @@ const { formData, formAction, refVForm, isUpdate, onFormSubmit, onFormReset } =
                   <template v-if="title === adminNav[1][0]">
                     <v-list-item
                       v-for="([title, icon, subtitle, to], i) in adminItemsNav2"
-                      :key="i"
-                      :prepend-icon="icon"
-                      :title="title"
-                      :subtitle="subtitle ?? undefined"
-                    >
-                      <template #append>
-                        <v-list-item-action end>
-                          <v-checkbox-btn v-model="formData.pages" :value="to"></v-checkbox-btn>
-                        </v-list-item-action>
-                      </template>
-                    </v-list-item>
-                  </template>
-
-                  <template v-if="title === adminNav[2][0]">
-                    <v-list-item
-                      v-for="([title, icon, subtitle, to], i) in adminItemsNav3"
                       :key="i"
                       :prepend-icon="icon"
                       :title="title"

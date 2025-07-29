@@ -40,7 +40,11 @@ const {
     :fullscreen="mdAndDown"
     persistent
   >
-    <v-card prepend-icon="mdi-file-document-edit" title="Edit Report">
+    <v-card
+      prepend-icon="mdi-file-document-edit"
+      title="Update Report"
+      subtitle="Update the report status"
+    >
       <v-form ref="refVForm" @submit.prevent="onFormSubmit">
         <v-card-text>
           <v-row dense>

@@ -7,6 +7,7 @@ import { useGeolocation } from '@vueuse/core'
 import { supabase } from '@/utils/supabase'
 import { Capacitor } from '@capacitor/core'
 import { ref } from 'vue'
+import { groq } from '@/utils/groq'
 
 const isFabOpen = ref(false)
 const authUserData = useAuthUserStore()
@@ -53,6 +54,111 @@ const getAddressFromCoordinates = async (lat: number, lng: number): Promise<stri
   } catch (error) {
     console.error('Error getting address from coordinates:', error)
     return 'Unable to determine location'
+  }
+}
+
+// Analyze image with AI to get description and priority
+const analyzeImageWithAI = async (
+  imageUrl: string,
+): Promise<{ description: string; priority: string }> => {
+  try {
+    console.log('Analyzing image with AI:', imageUrl)
+
+    const chatCompletion = await groq.chat.completions.create({
+      messages: [
+        {
+          role: 'user',
+          content: [
+            {
+              type: 'text',
+              text: `You are an AI assistant helping with citizen reports. Analyze this image and:
+
+1. Provide a detailed description of what you see (damage, issues, problems, etc.)
+2. Assess the priority level based on severity and urgency:
+   - Critical: Immediate danger to life/safety, major infrastructure failure, severe damage
+   - High: Significant damage, safety concerns, urgent repairs needed
+   - Medium: Moderate damage, non-urgent repairs, general maintenance issues
+   - Low: Minor cosmetic issues, minor maintenance, non-urgent concerns
+
+Respond in JSON format:
+{
+  "description": "detailed description of the image",
+  "priority": "Critical|High|Medium|Low"
+}
+
+Focus on infrastructure, roads, public safety, environmental issues, and community concerns.`,
+            },
+            {
+              type: 'image_url',
+              image_url: {
+                url: imageUrl,
+              },
+            },
+          ],
+        },
+      ],
+      model: 'meta-llama/llama-4-scout-17b-16e-instruct', // Use a vision model
+      temperature: 0.3, // Lower temperature for more consistent results
+      max_completion_tokens: 512,
+      top_p: 1,
+      stream: false,
+      stop: null,
+    })
+
+    const content = chatCompletion.choices[0]?.message?.content
+    if (!content) {
+      throw new Error('No response from AI')
+    }
+
+    console.log('AI Response:', content)
+
+    // Try to parse JSON response
+    try {
+      const jsonMatch = content.match(/\{[\s\S]*\}/)
+      if (jsonMatch) {
+        const parsed = JSON.parse(jsonMatch[0])
+        return {
+          description: parsed.description || 'AI-generated description',
+          priority: parsed.priority || 'Medium',
+        }
+      }
+    } catch (parseError) {
+      console.warn('Failed to parse AI JSON response, extracting manually', parseError)
+    }
+
+    // Fallback: extract description and priority manually
+    const description = content.replace(/\{[\s\S]*\}/, '').trim() || 'Image analysis completed'
+
+    // Determine priority from content
+    let priority = 'Medium'
+    const lowerContent = content.toLowerCase()
+    if (
+      lowerContent.includes('critical') ||
+      lowerContent.includes('danger') ||
+      lowerContent.includes('severe')
+    ) {
+      priority = 'Critical'
+    } else if (
+      lowerContent.includes('high') ||
+      lowerContent.includes('urgent') ||
+      lowerContent.includes('significant')
+    ) {
+      priority = 'High'
+    } else if (
+      lowerContent.includes('low') ||
+      lowerContent.includes('minor') ||
+      lowerContent.includes('cosmetic')
+    ) {
+      priority = 'Low'
+    }
+
+    return { description, priority }
+  } catch (error) {
+    console.error('Error analyzing image with AI:', error)
+    return {
+      description: 'Report submitted via mobile app. Please review image for details.',
+      priority: 'Medium',
+    }
   }
 }
 
@@ -105,13 +211,22 @@ const saveReportToSupabase = async (imageFile: File | Blob, fileName: string) =>
       return null
     }
 
-    // Update report with image path
+    // Get public URL for the uploaded image
     const { data: imageData } = supabase.storage.from('agianex').getPublicUrl(uploadData.path)
+    const imageUrl = imageData.publicUrl
 
+    // Analyze image with AI to get description and priority
+    showNotification('Analyzing image...', 200)
+    const { description, priority } = await analyzeImageWithAI(imageUrl)
+
+    // Update report with image path, AI-generated description, and priority
     const { error: updateError } = await supabase
       .from('reports')
       .update({
-        image_path: imageData.publicUrl,
+        image_path: imageUrl,
+        description: description,
+        priority: priority,
+        report_type: 'General', // Default type, can be updated later by admin
       })
       .eq('id', reportData.id)
 

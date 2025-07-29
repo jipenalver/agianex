@@ -35,9 +35,8 @@ const authUserStore = useAuthUserStore()
             We’re excited to have you onboard. If you encounter any issues or have any questions
             about the system, feel free to reach out the technical support,
             <a class="font-weight-bold" href="mailto:jdpenalver@carsu.edu.ph">
-              support@carsu.edu.ph
-            </a>
-            . We're here to support you every step of the way.
+              support@agianex.com </a
+            >. We're here to support you every step of the way.
           </p>
         </v-col>
 
