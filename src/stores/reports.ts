@@ -12,6 +12,7 @@ export interface ReportData {
   location: string
   latitude?: string
   longitude?: string
+  image_path?: string
   priority: string
   status: string
   dateSubmitted: string
@@ -67,8 +68,6 @@ export const useReportsStore = defineStore('reports', () => {
       loading.value = true
       error.value = null
 
-      console.log('Fetching reports...')
-
       // Build query with optional user filtering
       let query = supabase.from('reports').select('*').order('created_at', { ascending: false })
 
@@ -78,9 +77,6 @@ export const useReportsStore = defineStore('reports', () => {
       }
 
       const { data: reportsData, error: reportsError } = await query
-
-      console.log('Reports data:', reportsData)
-      console.log('Reports error:', reportsError)
 
       if (reportsError) {
         throw new Error(`Error fetching reports: ${reportsError.message}`)
@@ -97,14 +93,13 @@ export const useReportsStore = defineStore('reports', () => {
           location: report.location || 'Unknown Location',
           latitude: report.latitude,
           longitude: report.longitude,
+          image_path: report.image_path,
           priority: report.priority || 'Medium',
           status: report.status || 'Pending',
           dateSubmitted: report.created_at,
           created_at: report.created_at,
         }
       })
-
-      console.log('Processed reports:', reportsWithUserData)
 
       reports.value = reportsWithUserData
     } catch (err) {

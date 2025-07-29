@@ -46,6 +46,7 @@ const reportMarkers = computed(() => {
       status: report.status,
       citizen: report.citizen,
       location: report.location,
+      image_path: report.image_path,
       dateSubmitted: report.dateSubmitted,
       position: { lat, lng },
     }
@@ -118,6 +119,13 @@ const toggleMarker = (reportId: string) => {
 const isMarkerExpanded = (reportId: string) => {
   return expandedMarkers.value.has(reportId)
 }
+
+// Handle image load errors
+const onImageError = (event: Event) => {
+  const img = event.target as HTMLImageElement
+  img.style.display = 'none'
+  console.log('Failed to load image:', img.src)
+}
 </script>
 
 <template>
@@ -146,17 +154,11 @@ const isMarkerExpanded = (reportId: string) => {
         </template>
 
         <v-card-text>
-          <!-- Debug info -->
-          <div class="text-caption mb-2">
-            Loading: {{ reportsStore.loading }}, Reports count: {{ reportsStore.reports.length }}
-          </div>
-
           <!-- Loading state -->
           <div v-if="reportsStore.loading" class="text-center pa-8">
             <v-progress-circular indeterminate color="primary" size="48"></v-progress-circular>
             <div class="text-h6 mt-4">Loading Reports...</div>
           </div>
-
           <!-- Map Container -->
           <div v-else style="height: 400px; width: 100%">
             <GoogleMap
@@ -200,6 +202,17 @@ const isMarkerExpanded = (reportId: string) => {
                       <div class="report-type">{{ report.type }}</div>
                       <div class="report-description">{{ report.description }}</div>
                       <div class="report-location">📍 {{ report.location }}</div>
+
+                      <!-- Report Image -->
+                      <div v-if="report.image_path" class="report-image-container">
+                        <img
+                          :src="report.image_path"
+                          :alt="`Report ${report.id} image`"
+                          class="report-image"
+                          @error="onImageError"
+                        />
+                      </div>
+
                       <div class="report-priority">Priority: {{ report.priority }}</div>
                       <div class="report-status">Status: {{ report.status }}</div>
                       <div class="report-date">
