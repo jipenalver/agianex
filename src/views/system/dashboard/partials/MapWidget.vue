@@ -17,7 +17,7 @@ const { coords, locatedAt, resume, pause } = useGeolocation({
 const apiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY
 const defaultLatLng = { lat: 8.928979, lng: 125.5035561 } // Butuan City Center
 const isTrackingPause = ref(false)
-const mapZoom = ref(15)
+const mapZoom = ref(10)
 
 // Reports store
 const reportsStore = useReportsStore()
@@ -86,7 +86,7 @@ watchEffect(() => {
     coords.value.latitude !== Number.POSITIVE_INFINITY &&
     coords.value.longitude !== Number.POSITIVE_INFINITY
   ) {
-    mapZoom.value = 17
+    mapZoom.value = 14
   }
 })
 
@@ -97,12 +97,12 @@ const onTrackingPause = () => {
   // Pause Tracking
   if (isTrackingPause.value) {
     pause()
-    mapZoom.value = 15
+    mapZoom.value = 10
   }
   // Resume Tracking
   else {
     resume()
-    mapZoom.value = 17
+    mapZoom.value = 14
   }
 }
 
