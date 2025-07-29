@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import AppAlert from '@/components/common/AppAlert.vue'
 import ReportsFormDialog from './ReportsFormDialog.vue'
+import type { ReportData } from '@/stores/reports'
 import { useReportsTable } from './reportsTable'
 import { useDisplay } from 'vuetify'
 import { ref } from 'vue'
-import type { ReportData } from '@/stores/reports'
 
 const { mobile } = useDisplay()
 const { tableOptions, formAction, onLoadItems, reportsStore, authUserStore } = useReportsTable()
