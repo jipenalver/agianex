@@ -6,16 +6,33 @@ import AppLayout from '@/components/layout/AppLayout.vue'
 import WelcomeWidget from './partials/WelcomeWidget.vue'
 import ReportWidget from './partials/ReportWidget.vue'
 import { useAuthUserStore } from '@/stores/authUser'
+import { useReportsStore } from '@/stores/reports'
+import { ref, onMounted, onUnmounted } from 'vue'
 import MapWidget from './partials/MapWidget.vue'
 import { useDisplay } from 'vuetify'
-import { ref } from 'vue'
 
 const { xs } = useDisplay()
 
 const authUserStore = useAuthUserStore()
+const reportsStore = useReportsStore()
 
 const isDrawerVisible = ref(xs.value ? false : true)
 const activeTab = ref('reports')
+
+// Fetch reports data and setup realtime subscription on dashboard load
+onMounted(async () => {
+  try {
+    // Subscribe to realtime updates for reports
+    await reportsStore.subscribeToReports()
+  } catch (error) {
+    console.error('Error loading reports for dashboard:', error)
+  }
+})
+
+// Cleanup realtime subscription when component is unmounted
+onUnmounted(async () => {
+  await reportsStore.unsubscribeFromReports()
+})
 </script>
 
 <template>
