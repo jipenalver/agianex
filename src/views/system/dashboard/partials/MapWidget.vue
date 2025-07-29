@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { getMarkerColor, getStatusIcon } from './mapWidget'
 import { GoogleMap, AdvancedMarker } from 'vue3-google-map'
-import { computed, ref, watchEffect, onMounted } from 'vue'
 import { useReportsStore } from '@/stores/reports'
+import { computed, ref, watchEffect } from 'vue'
 import { useGeolocation } from '@vueuse/core'
 import './map.css'
 
@@ -21,14 +21,6 @@ const mapZoom = ref(10)
 
 // Reports store
 const reportsStore = useReportsStore()
-
-// Load reports on component mount (for admin, show all reports)
-onMounted(async () => {
-  // Only fetch reports if they haven't been loaded yet
-  if (reportsStore.reports.length === 0 && !reportsStore.loading) {
-    await reportsStore.fetchReports()
-  }
-})
 
 // Convert reports to markers format
 const reportMarkers = computed(() => {
@@ -165,7 +157,6 @@ const onImageError = (event: Event) => {
           <!-- Map Container -->
           <div v-else style="height: 400px; width: 100%">
             <GoogleMap
-              :key="reportMarkers.length"
               id="map"
               :api-key="apiKey"
               :center="center"
