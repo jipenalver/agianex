@@ -1,9 +1,13 @@
 <script setup lang="ts">
+import { useAuthUserStore } from '@/stores/authUser'
 import { useReportsStore } from '@/stores/reports'
+import { storeToRefs } from 'pinia'
+import { onMounted } from 'vue'
 
 const reportsStore = useReportsStore()
+const authUserStore = useAuthUserStore()
 
-// Use store computed properties
+// Use storeToRefs to maintain reactivity for computed properties and refs
 const {
   totalReports,
   resolvedReports,
@@ -14,7 +18,12 @@ const {
   thisWeekReports,
   resolutionRate,
   loading,
-} = reportsStore
+} = storeToRefs(reportsStore)
+
+onMounted(async () => {
+  if (authUserStore.userRole === 'User' && authUserStore.userData?.id)
+    await reportsStore.fetchReports(authUserStore.userData.id)
+})
 </script>
 
 <template>
