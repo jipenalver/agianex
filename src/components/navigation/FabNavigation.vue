@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { Camera, CameraResultType, CameraSource } from '@capacitor/camera'
+import { formActionDefault } from '@/utils/helpers/constants'
 import { useAuthUserStore } from '@/stores/authUser'
+import AppAlert from '../common/AppAlert.vue'
 import { useGeolocation } from '@vueuse/core'
 import { supabase } from '@/utils/supabase'
 import { Capacitor } from '@capacitor/core'
@@ -8,6 +10,15 @@ import { ref } from 'vue'
 
 const isFabOpen = ref(false)
 const authUserData = useAuthUserStore()
+
+const formAction = ref({ ...formActionDefault })
+
+// Show notification using AppAlert
+const showNotification = (message: string, status: number) => {
+  formAction.value.formMessage = message
+  formAction.value.formStatus = status
+  formAction.value.formAlert = true
+}
 
 // Get user's geolocation
 const { coords } = useGeolocation({
@@ -39,7 +50,7 @@ const saveReportToSupabase = async (imageFile: File | Blob, fileName: string) =>
 
     if (reportError) {
       console.error('Error creating report:', reportError)
-      alert('Failed to create report. Please try again.')
+      showNotification('Failed to create report. Please try again.', 400)
       return null
     }
 
@@ -54,7 +65,7 @@ const saveReportToSupabase = async (imageFile: File | Blob, fileName: string) =>
 
     if (uploadError) {
       console.error('Error uploading image:', uploadError)
-      alert('Failed to upload image. Please try again.')
+      showNotification('Failed to upload image. Please try again.', 400)
       return null
     }
 
@@ -73,11 +84,11 @@ const saveReportToSupabase = async (imageFile: File | Blob, fileName: string) =>
     }
 
     console.log('Report saved successfully:', reportData)
-    alert(`Report #${reportData.id} submitted successfully!`)
+    showNotification(`Report submitted successfully!`, 200)
     return reportData
   } catch (error) {
     console.error('Error saving report:', error)
-    alert('Failed to save report. Please try again.')
+    showNotification('Failed to save report. Please try again.', 400)
     return null
   }
 }
@@ -140,7 +151,7 @@ const takePhoto = async () => {
     isFabOpen.value = false
   } catch (error) {
     console.error('Error taking photo:', error)
-    alert('Failed to take photo. Please try again.')
+    showNotification('Failed to take photo. Please try again.', 400)
   }
 }
 
@@ -187,12 +198,18 @@ const browseImages = async () => {
     isFabOpen.value = false
   } catch (error) {
     console.error('Error browsing images:', error)
-    alert('Failed to browse images. Please try again.')
+    showNotification('Failed to browse images. Please try again.', 400)
   }
 }
 </script>
 
 <template>
+  <AppAlert
+    v-model:is-alert-visible="formAction.formAlert"
+    :form-message="formAction.formMessage"
+    :form-status="formAction.formStatus"
+  ></AppAlert>
+
   <v-fab id="fab" variant="elevated" color="primary" size="x-large" icon app>
     <v-icon>{{ isFabOpen ? 'mdi-close' : 'mdi-camera-plus' }}</v-icon>
     <v-speed-dial
