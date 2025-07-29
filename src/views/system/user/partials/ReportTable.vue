@@ -1,25 +1,10 @@
 <script setup lang="ts">
-import { useAuthUserStore } from '@/stores/authUser'
-import { useReportsStore } from '@/stores/reports'
+import AppAlert from '@/components/common/AppAlert.vue'
+import { useReportsTable } from './reportsTable'
 import { useDisplay } from 'vuetify'
-import { onMounted } from 'vue'
 
 const { mobile } = useDisplay()
-const authUserData = useAuthUserStore()
-const reportsStore = useReportsStore()
-
-// Use store data
-const { reports, loading } = reportsStore
-
-// Load reports on component mount
-onMounted(async () => {
-  // If user role is 'User', filter by their reports only
-  if (authUserData.userRole === 'User' && authUserData.userData?.id) {
-    await reportsStore.fetchReports(authUserData.userData.id)
-  } else {
-    await reportsStore.fetchReports()
-  }
-})
+const { tableOptions, formAction, onLoadItems, reportsStore, authUserStore } = useReportsTable()
 
 // Table headers
 const headers = [
@@ -31,7 +16,7 @@ const headers = [
   { title: 'Priority', key: 'priority', sortable: true },
   { title: 'Status', key: 'status', sortable: true },
   { title: 'Date', key: 'dateSubmitted', sortable: true },
-  ...(authUserData.userRole !== 'User'
+  ...(authUserStore.userRole !== 'User'
     ? [{ title: 'Actions', key: 'actions', sortable: false }]
     : []),
 ]
@@ -76,19 +61,23 @@ const getPriorityColor = (priority: string) => {
     elevation="8"
   >
     <v-card-text>
-      <!-- Loading state -->
-      <div v-if="loading" class="text-center pa-8">
-        <v-progress-circular indeterminate color="primary" size="48"></v-progress-circular>
-        <div class="text-h6 mt-4">Loading Reports...</div>
-      </div>
+      <!-- Alert for errors -->
+      <AppAlert
+        v-if="formAction.formAlert"
+        v-model:is-alert-visible="formAction.formAlert"
+        :form-message="formAction.formMessage"
+        :form-status="formAction.formStatus"
+      />
 
-      <!-- Data table -->
+      <!-- Data table with server-side pagination -->
       <!-- eslint-disable vue/valid-v-slot -->
-      <v-data-table
-        v-else
+      <v-data-table-server
         :headers="headers"
-        :items="reports"
-        :items-per-page="5"
+        :items="reportsStore.serverReports"
+        :items-length="reportsStore.totalServerReports"
+        :loading="tableOptions.isLoading"
+        :items-per-page="tableOptions.itemsPerPage"
+        @update:options="onLoadItems"
         class="elevation-1"
         :hide-default-header="mobile"
         :mobile="mobile"
@@ -140,7 +129,7 @@ const getPriorityColor = (priority: string) => {
             <div class="text-caption">No citizen reports have been submitted yet.</div>
           </div>
         </template>
-      </v-data-table>
+      </v-data-table-server>
     </v-card-text>
   </v-card>
 </template>
