@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { requiredValidator } from '@/utils/validators'
+import { useReportsFormDialog } from './reportsFormDialog'
 import { type TableOptions } from '@/utils/helpers/tables'
 import AppAlert from '@/components/common/AppAlert.vue'
-import { useReportsFormDialog } from './reportsFormDialog'
+import { requiredValidator } from '@/utils/validators'
 import { type ReportData } from '@/stores/reports'
 import { useDisplay } from 'vuetify'
 

@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { useReportsStore } from '@/stores/reports'
-import { onMounted } from 'vue'
 
 const reportsStore = useReportsStore()
 
@@ -16,11 +15,6 @@ const {
   resolutionRate,
   loading,
 } = reportsStore
-
-// Load reports on component mount
-onMounted(() => {
-  reportsStore.fetchReports()
-})
 </script>
 
 <template>
