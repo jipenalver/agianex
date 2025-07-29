@@ -4,6 +4,7 @@ import FabNavigation from '@/components/navigation/FabNavigation.vue'
 import AppLayout from '@/components/layout/AppLayout.vue'
 import WelcomeWidget from './partials/WelcomeWidget.vue'
 import ReportWidget from './partials/ReportWidget.vue'
+import ReportTable from '@/views/system/user/partials/ReportTable.vue'
 import { useAuthUserStore } from '@/stores/authUser'
 import MapWidget from './partials/MapWidget.vue'
 import { useDisplay } from 'vuetify'
@@ -14,6 +15,7 @@ const { xs } = useDisplay()
 const authUserStore = useAuthUserStore()
 
 const isDrawerVisible = ref(xs.value ? false : true)
+const activeTab = ref('reports')
 </script>
 
 <template>
@@ -30,7 +32,26 @@ const isDrawerVisible = ref(xs.value ? false : true)
           </v-col>
 
           <v-col v-if="authUserStore.userRole !== 'User'" cols="12">
-            <MapWidget></MapWidget>
+            <v-tabs v-model="activeTab" class="mb-5">
+              <v-tab value="reports" class="mx-1" color="primary" variant="flat" rounded="lg">
+                <v-icon start>mdi-table</v-icon>
+                Reports
+              </v-tab>
+              <v-tab value="map" class="mx-1" color="primary" variant="flat" rounded="lg">
+                <v-icon start>mdi-map</v-icon>
+                Map View
+              </v-tab>
+            </v-tabs>
+
+            <v-tabs-window v-model="activeTab">
+              <v-tabs-window-item value="reports">
+                <ReportTable></ReportTable>
+              </v-tabs-window-item>
+
+              <v-tabs-window-item value="map">
+                <MapWidget></MapWidget>
+              </v-tabs-window-item>
+            </v-tabs-window>
           </v-col>
 
           <v-col v-if="authUserStore.userRole === 'User'" cols="12">
