@@ -12,12 +12,12 @@ const reportsStore = useReportsStore()
 const { reports, loading } = reportsStore
 
 // Load reports on component mount
-onMounted(() => {
+onMounted(async () => {
   // If user role is 'User', filter by their reports only
   if (authUserData.userRole === 'User' && authUserData.userData?.id) {
-    reportsStore.fetchReports(authUserData.userData.id)
+    await reportsStore.fetchReports(authUserData.userData.id)
   } else {
-    reportsStore.fetchReports()
+    await reportsStore.fetchReports()
   }
 })
 

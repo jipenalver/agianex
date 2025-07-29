@@ -23,10 +23,10 @@ const mapZoom = ref(15)
 const reportsStore = useReportsStore()
 
 // Load reports on component mount (for admin, show all reports)
-onMounted(() => {
+onMounted(async () => {
   // Only fetch reports if they haven't been loaded yet
   if (reportsStore.reports.length === 0 && !reportsStore.loading) {
-    reportsStore.fetchReports()
+    await reportsStore.fetchReports()
   }
 })
 
