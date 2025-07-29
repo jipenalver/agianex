@@ -31,7 +31,7 @@ const authUserStore = useAuthUserStore()
             of road incidents and infrastructure problems.
           </p>
 
-          <p class="mt-3 text-justify">
+          <p v-if="authUserStore.userRole !== 'User'" class="mt-3 text-justify">
             We’re excited to have you onboard. If you encounter any issues or have any questions
             about the system, feel free to reach out the technical support,
             <a class="font-weight-bold" href="mailto:jdpenalver@carsu.edu.ph">
@@ -41,7 +41,13 @@ const authUserStore = useAuthUserStore()
           </p>
         </v-col>
 
-        <v-col class="order-1 order-sm-2" cols="12" lg="3" sm="3">
+        <v-col
+          v-if="authUserStore.userRole !== 'User'"
+          class="order-1 order-sm-2"
+          cols="12"
+          lg="3"
+          sm="3"
+        >
           <v-img class="mx-auto" max-width="225" :src="MiscWelcomeJohn"></v-img>
         </v-col>
       </v-row>
