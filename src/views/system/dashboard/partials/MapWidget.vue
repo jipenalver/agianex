@@ -20,6 +20,9 @@ const { filters, reportTypeOptions, statusOptions, priorityOptions, applyFilters
 // State to track if filters are applied
 const filtersApplied = ref(false)
 
+// Loading state for refresh
+const refreshing = ref(false)
+
 // Computed filtered reports
 const filteredReports = computed(() => {
   if (filtersApplied.value) {
@@ -88,6 +91,25 @@ const onImageError = (event: Event) => {
   img.style.display = 'none'
   console.log('Failed to load image:', img.src)
 }
+
+// Refresh map data
+const refreshMap = async () => {
+  try {
+    refreshing.value = true
+
+    // Refresh reports data from the store
+    await reportsStore.refreshReports()
+
+    // Clear any expanded markers to reset the view
+    expandedMarkers.value.clear()
+
+    console.log('Map refreshed with updated reports data')
+  } catch (error) {
+    console.error('Error refreshing map:', error)
+  } finally {
+    refreshing.value = false
+  }
+}
 </script>
 
 <template>
@@ -100,7 +122,13 @@ const onImageError = (event: Event) => {
         subtitle="Real-time citizen reports on the map"
       >
         <template #append>
-          <v-btn variant="text" icon>
+          <v-btn
+            variant="text"
+            icon
+            @click="refreshMap"
+            :loading="refreshing"
+            :disabled="refreshing"
+          >
             <v-icon icon="mdi-refresh"></v-icon>
 
             <v-tooltip activator="parent" location="top"> Refresh Map </v-tooltip>
