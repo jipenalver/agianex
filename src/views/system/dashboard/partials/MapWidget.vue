@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { getMarkerColor, getStatusIcon, reportMarkersDummy } from './mapsWidget'
+import { getMarkerColor, getStatusIcon, reportMarkersDummy } from './mapWidget'
 import { GoogleMap, AdvancedMarker } from 'vue3-google-map'
 import { computed, ref, watchEffect } from 'vue'
 import { useGeolocation } from '@vueuse/core'
