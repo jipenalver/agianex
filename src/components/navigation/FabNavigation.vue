@@ -152,14 +152,18 @@ const uriToFile = async (uri: string, filename: string): Promise<File> => {
 // Camera functionality
 const takePhoto = async () => {
   try {
+    // Add camera active class to body for styling
+    document.body.classList.add('camera-active')
+
     // Check if running on native platform
     if (!Capacitor.isNativePlatform()) {
-      // For web, use web camera
+      // For web, use web camera with enhanced styling
       const image = await Camera.getPhoto({
         quality: 90,
         allowEditing: false,
         resultType: CameraResultType.DataUrl,
         source: CameraSource.Camera,
+        webUseInput: false, // Use native camera interface
       })
 
       if (image.dataUrl) {
@@ -188,6 +192,9 @@ const takePhoto = async () => {
   } catch (error) {
     console.error('Error taking photo:', error)
     showNotification('Failed to take photo. Please try again.', 400)
+  } finally {
+    // Remove camera active class
+    document.body.classList.remove('camera-active')
   }
 }
 
@@ -271,4 +278,8 @@ const browseImages = async () => {
 #fab {
   margin-bottom: 3.75rem;
 }
+</style>
+
+<style>
+@import './fabNavigation.css';
 </style>
