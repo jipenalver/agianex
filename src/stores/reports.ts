@@ -19,6 +19,21 @@ interface ExtendedUser {
   user_metadata?: UserMetadata
 }
 
+// Interface for raw report data from Supabase
+interface RawReportData {
+  id: number
+  user_id: string
+  report_type?: string
+  description?: string
+  location?: string
+  latitude?: string
+  longitude?: string
+  image_path?: string
+  priority?: string
+  status?: string
+  created_at: string
+}
+
 // Interface for report data
 export interface ReportData {
   id: number
@@ -47,7 +62,50 @@ export const useReportsStore = defineStore('reports', () => {
   const totalServerReports = ref(0)
   const serverLoading = ref(false)
 
-  // Computed - Basic statistics
+  // Helper function to transform reports with user data
+  const transformReportsWithUserData = async (
+    reportsData: RawReportData[],
+  ): Promise<ReportData[]> => {
+    return Promise.all(
+      reportsData.map(async (report) => {
+        // Get user data from auth.users using admin client
+        const { data: userData, error: userError } = await supabaseAdmin.auth.admin.getUserById(
+          report.user_id,
+        )
+
+        let citizenName = 'Unknown User'
+        if (!userError && userData.user) {
+          // Try both raw_user_meta_data and user_metadata
+          const user = userData.user as ExtendedUser
+          const rawMetadata = user.raw_user_meta_data
+          const userMetadata = user.user_metadata
+
+          const metadata = rawMetadata || userMetadata
+
+          if (metadata && (metadata.firstname || metadata.lastname)) {
+            citizenName =
+              `${metadata.firstname || ''} ${metadata.lastname || ''}`.trim() || 'Unknown User'
+          }
+        }
+
+        return {
+          id: report.id,
+          citizen: citizenName,
+          user_id: report.user_id,
+          type: report.report_type || 'General',
+          description: report.description || 'No description provided',
+          location: report.location || 'Unknown Location',
+          latitude: report.latitude,
+          longitude: report.longitude,
+          image_path: report.image_path,
+          priority: report.priority || 'Medium',
+          status: report.status || 'Pending',
+          dateSubmitted: report.created_at,
+          created_at: report.created_at,
+        }
+      }),
+    )
+  } // Computed - Basic statistics
   const totalReports = computed(() => reports.value.length)
 
   const resolvedReports = computed(
@@ -104,48 +162,8 @@ export const useReportsStore = defineStore('reports', () => {
         throw new Error(`Error fetching reports: ${reportsError.message}`)
       }
 
-      // For each report, get user details from auth.users
-      const reportsWithUserData = await Promise.all(
-        reportsData.map(async (report) => {
-          // Get user data from auth.users using admin client
-          const { data: userData, error: userError } = await supabaseAdmin.auth.admin.getUserById(
-            report.user_id,
-          )
-
-          let citizenName = 'Unknown User'
-          if (!userError && userData.user) {
-            // Try both raw_user_meta_data and user_metadata
-            const user = userData.user as ExtendedUser
-            const rawMetadata = user.raw_user_meta_data
-            const userMetadata = user.user_metadata
-
-            const metadata = rawMetadata || userMetadata
-
-            if (metadata && (metadata.firstname || metadata.lastname)) {
-              citizenName =
-                `${metadata.firstname || ''} ${metadata.lastname || ''}`.trim() || 'Unknown User'
-            }
-          }
-
-          return {
-            id: report.id,
-            citizen: citizenName,
-            user_id: report.user_id,
-            type: report.report_type || 'General',
-            description: report.description || 'No description provided',
-            location: report.location || 'Unknown Location',
-            latitude: report.latitude,
-            longitude: report.longitude,
-            image_path: report.image_path,
-            priority: report.priority || 'Medium',
-            status: report.status || 'Pending',
-            dateSubmitted: report.created_at,
-            created_at: report.created_at,
-          }
-        }),
-      )
-
-      reports.value = reportsWithUserData
+      // Transform reports with user data
+      reports.value = await transformReportsWithUserData(reportsData || [])
     } catch (err) {
       error.value = err instanceof Error ? err.message : 'An error occurred while fetching reports'
       console.error('Error in fetchReports:', err)
@@ -208,48 +226,8 @@ export const useReportsStore = defineStore('reports', () => {
         throw new Error(`Error fetching reports: ${reportsError.message}`)
       }
 
-      // Get user details for each report
-      const reportsWithUserData = await Promise.all(
-        (reportsData || []).map(async (report) => {
-          // Get user data from auth.users using admin client
-          const { data: userData, error: userError } = await supabaseAdmin.auth.admin.getUserById(
-            report.user_id,
-          )
-
-          let citizenName = 'Unknown User'
-          if (!userError && userData.user) {
-            // Try both raw_user_meta_data and user_metadata
-            const user = userData.user as ExtendedUser
-            const rawMetadata = user.raw_user_meta_data
-            const userMetadata = user.user_metadata
-
-            const metadata = rawMetadata || userMetadata
-
-            if (metadata && (metadata.firstname || metadata.lastname)) {
-              citizenName =
-                `${metadata.firstname || ''} ${metadata.lastname || ''}`.trim() || 'Unknown User'
-            }
-          }
-
-          return {
-            id: report.id,
-            citizen: citizenName,
-            user_id: report.user_id,
-            type: report.report_type || 'General',
-            description: report.description || 'No description provided',
-            location: report.location || 'Unknown Location',
-            latitude: report.latitude,
-            longitude: report.longitude,
-            image_path: report.image_path,
-            priority: report.priority || 'Medium',
-            status: report.status || 'Pending',
-            dateSubmitted: report.created_at,
-            created_at: report.created_at,
-          }
-        }),
-      )
-
-      serverReports.value = reportsWithUserData
+      // Transform reports with user data
+      serverReports.value = await transformReportsWithUserData(reportsData || [])
       totalServerReports.value = count || 0
     } catch (err) {
       error.value = err instanceof Error ? err.message : 'An error occurred while fetching reports'
