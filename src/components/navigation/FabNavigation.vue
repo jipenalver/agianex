@@ -27,22 +27,58 @@ const { coords } = useGeolocation({
   maximumAge: 0,
 })
 
+// Reverse geocoding function to get address from coordinates
+const getAddressFromCoordinates = async (lat: number, lng: number): Promise<string> => {
+  try {
+    const apiKey = import.meta.env.VITE_GOOGLE_GEOC_API_KEY
+    const response = await fetch(
+      `https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lng}&key=${apiKey}`,
+    )
+
+    if (!response.ok) {
+      throw new Error('Failed to fetch address')
+    }
+
+    const data = await response.json()
+
+    if (data.status === 'OK' && data.results && data.results.length > 0) {
+      // Get the formatted address from the first result
+      const address = data.results[0].formatted_address
+      console.log('Reverse geocoded address:', address)
+      return address
+    } else {
+      console.warn('No address found for coordinates:', lat, lng)
+      return 'Location not found'
+    }
+  } catch (error) {
+    console.error('Error getting address from coordinates:', error)
+    return 'Unable to determine location'
+  }
+}
+
 // Save report to Supabase database and storage
 const saveReportToSupabase = async (imageFile: File | Blob, fileName: string) => {
   try {
+    // Get coordinates
+    const latitude =
+      coords.value.latitude !== Number.POSITIVE_INFINITY ? coords.value.latitude : null
+    const longitude =
+      coords.value.longitude !== Number.POSITIVE_INFINITY ? coords.value.longitude : null
+
+    // Get address from coordinates if available
+    let location = 'Location not available'
+    if (latitude && longitude) {
+      location = await getAddressFromCoordinates(latitude, longitude)
+    }
+
     // First, insert the report record to get the ID
     const { data: reportData, error: reportError } = await supabase
       .from('reports')
       .insert({
         user_id: authUserData.userData?.id,
-        latitude:
-          coords.value.latitude !== Number.POSITIVE_INFINITY
-            ? coords.value.latitude.toString()
-            : null,
-        longitude:
-          coords.value.longitude !== Number.POSITIVE_INFINITY
-            ? coords.value.longitude.toString()
-            : null,
+        latitude: latitude ? latitude.toString() : null,
+        longitude: longitude ? longitude.toString() : null,
+        location: location,
         status: 'Pending',
       })
       .select()
