@@ -1,89 +1,24 @@
 <script setup lang="ts">
-import { supabase, supabaseAdmin } from '@/utils/supabase'
 import { useAuthUserStore } from '@/stores/authUser'
+import { useReportsStore } from '@/stores/reports'
 import { useDisplay } from 'vuetify'
-import { ref, onMounted } from 'vue'
+import { onMounted } from 'vue'
 
 const { mobile } = useDisplay()
 const authUserData = useAuthUserStore()
+const reportsStore = useReportsStore()
 
-// Interface for report data
-interface ReportData {
-  id: number
-  citizen: string
-  type: string
-  description: string
-  location: string
-  priority: string
-  status: string
-  dateSubmitted: string
-}
-
-// Reports data from Supabase
-const reports = ref<ReportData[]>([])
-const loading = ref(true)
-
-// Fetch reports from Supabase
-const fetchReports = async () => {
-  try {
-    loading.value = true
-
-    // Fetch reports from Supabase
-    let query = supabase.from('reports').select('*').order('created_at', {
-      ascending: false,
-    })
-
-    if (authUserData.userRole === 'User') query = query.eq('user_id', authUserData.userData?.id)
-
-    const { data: reportsData, error: reportsError } = await query
-
-    if (reportsError) {
-      console.error('Error fetching reports:', reportsError)
-      return
-    }
-
-    // For each report, get user details from auth.users
-    const reportsWithUserData = await Promise.all(
-      reportsData.map(async (report) => {
-        // Get user data from auth.users using admin client
-        const { data: userData, error: userError } = await supabaseAdmin.auth.admin.getUserById(
-          report.user_id,
-        )
-
-        let citizenName = 'Unknown User'
-        if (!userError && userData.user?.user_metadata) {
-          const metadata = userData.user.user_metadata as {
-            firstname?: string
-            lastname?: string
-          }
-          citizenName =
-            `${metadata.firstname || ''} ${metadata.lastname || ''}`.trim() || 'Unknown User'
-        }
-
-        return {
-          id: report.id,
-          citizen: citizenName,
-          type: report.report_type || 'General',
-          description: report.description || 'No description provided',
-          location: report.location || 'Unknown Location',
-          priority: report.priority || 'Medium',
-          status: report.status || 'Pending',
-          dateSubmitted: report.created_at,
-        }
-      }),
-    )
-
-    reports.value = reportsWithUserData
-  } catch (error) {
-    console.error('Error in fetchReports:', error)
-  } finally {
-    loading.value = false
-  }
-}
+// Use store data
+const { reports, loading } = reportsStore
 
 // Load reports on component mount
 onMounted(() => {
-  fetchReports()
+  // If user role is 'User', filter by their reports only
+  if (authUserData.userRole === 'User' && authUserData.userData?.id) {
+    reportsStore.fetchReports(authUserData.userData.id)
+  } else {
+    reportsStore.fetchReports()
+  }
 })
 
 // Table headers
