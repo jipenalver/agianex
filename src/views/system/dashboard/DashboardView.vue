@@ -5,6 +5,8 @@ import FabNavigation from '@/components/navigation/FabNavigation.vue'
 import AppLayout from '@/components/layout/AppLayout.vue'
 import WelcomeWidget from './partials/WelcomeWidget.vue'
 import ReportWidget from './partials/ReportWidget.vue'
+import ChartWidget from './partials/ChartWidget.vue'
+import PieWidget from './partials/PieWidget.vue'
 import { useAuthUserStore } from '@/stores/authUser'
 import { useReportsStore } from '@/stores/reports'
 import { ref, onMounted, onUnmounted } from 'vue'
@@ -48,10 +50,28 @@ onUnmounted(async () => {
             <v-col cols="12">
               <v-row dense>
                 <v-col cols="12" sm="6">
-                  <ReportWidget></ReportWidget>
+                  <v-row dense>
+                    <v-col cols="12">
+                      <WelcomeWidget></WelcomeWidget>
+                    </v-col>
+
+                    <v-col cols="12">
+                      <PieWidget></PieWidget>
+                    </v-col>
+                  </v-row>
                 </v-col>
 
-                <v-col cols="12" sm="6"> </v-col>
+                <v-col cols="12" sm="6">
+                  <v-row dense>
+                    <v-col cols="12">
+                      <ReportWidget></ReportWidget>
+                    </v-col>
+
+                    <v-col cols="12">
+                      <ChartWidget></ChartWidget>
+                    </v-col>
+                  </v-row>
+                </v-col>
               </v-row>
             </v-col>
 
