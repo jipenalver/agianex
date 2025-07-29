@@ -1,6 +1,22 @@
 import { defineStore } from 'pinia'
-import { supabase } from '@/utils/supabase'
+import { supabase, supabaseAdmin } from '@/utils/supabase'
 import { ref, computed } from 'vue'
+
+// Interface for user metadata
+interface UserMetadata {
+  firstname?: string
+  lastname?: string
+  phone?: string
+  user_role?: string
+  middlename?: string
+  email_verified?: boolean
+}
+
+// Extended user interface to include raw_user_meta_data
+interface ExtendedUser {
+  raw_user_meta_data?: UserMetadata
+  user_metadata?: UserMetadata
+}
 
 // Interface for report data
 export interface ReportData {
@@ -82,24 +98,46 @@ export const useReportsStore = defineStore('reports', () => {
         throw new Error(`Error fetching reports: ${reportsError.message}`)
       }
 
-      // For now, let's simplify and not fetch user data to avoid potential hanging
-      const reportsWithUserData = reportsData.map((report) => {
-        return {
-          id: report.id,
-          citizen: `User ${report.user_id.substring(0, 8)}`, // Temporary simplified citizen name
-          user_id: report.user_id,
-          type: report.report_type || 'General',
-          description: report.description || 'No description provided',
-          location: report.location || 'Unknown Location',
-          latitude: report.latitude,
-          longitude: report.longitude,
-          image_path: report.image_path,
-          priority: report.priority || 'Medium',
-          status: report.status || 'Pending',
-          dateSubmitted: report.created_at,
-          created_at: report.created_at,
-        }
-      })
+      // For each report, get user details from auth.users
+      const reportsWithUserData = await Promise.all(
+        reportsData.map(async (report) => {
+          // Get user data from auth.users using admin client
+          const { data: userData, error: userError } = await supabaseAdmin.auth.admin.getUserById(
+            report.user_id,
+          )
+
+          let citizenName = 'Unknown User'
+          if (!userError && userData.user) {
+            // Try both raw_user_meta_data and user_metadata
+            const user = userData.user as ExtendedUser
+            const rawMetadata = user.raw_user_meta_data
+            const userMetadata = user.user_metadata
+
+            const metadata = rawMetadata || userMetadata
+
+            if (metadata && (metadata.firstname || metadata.lastname)) {
+              citizenName =
+                `${metadata.firstname || ''} ${metadata.lastname || ''}`.trim() || 'Unknown User'
+            }
+          }
+
+          return {
+            id: report.id,
+            citizen: citizenName,
+            user_id: report.user_id,
+            type: report.report_type || 'General',
+            description: report.description || 'No description provided',
+            location: report.location || 'Unknown Location',
+            latitude: report.latitude,
+            longitude: report.longitude,
+            image_path: report.image_path,
+            priority: report.priority || 'Medium',
+            status: report.status || 'Pending',
+            dateSubmitted: report.created_at,
+            created_at: report.created_at,
+          }
+        }),
+      )
 
       reports.value = reportsWithUserData
     } catch (err) {
