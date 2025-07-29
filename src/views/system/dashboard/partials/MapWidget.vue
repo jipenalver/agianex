@@ -2,22 +2,13 @@
 import { getMarkerColor, getStatusIcon } from './mapWidget'
 import { GoogleMap, AdvancedMarker } from 'vue3-google-map'
 import { useReportsStore } from '@/stores/reports'
-import { computed, ref, watchEffect } from 'vue'
-import { useGeolocation } from '@vueuse/core'
 import { useMapFilters } from './mapFilters'
-
-// Utilize pre-defined vue functions; GeoLocation
-const { coords, locatedAt, resume, pause } = useGeolocation({
-  enableHighAccuracy: true,
-  timeout: 10000,
-  maximumAge: 0,
-})
+import { computed, ref } from 'vue'
 
 // Load Variables
+const mapZoom = ref(12)
 const apiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY
 const defaultLatLng = { lat: 8.928979, lng: 125.5035561 } // Butuan City Center
-const isTrackingPause = ref(false)
-const mapZoom = ref(11)
 
 // Reports store
 const reportsStore = useReportsStore()
@@ -74,56 +65,6 @@ const reportMarkers = computed(() => {
   })
 })
 
-// Computed center for the map
-const center = computed(() => {
-  if (isTrackingPause.value) return defaultLatLng
-
-  if (
-    coords.value.latitude !== Number.POSITIVE_INFINITY &&
-    coords.value.longitude !== Number.POSITIVE_INFINITY
-  )
-    return { lat: coords.value.latitude, lng: coords.value.longitude }
-
-  return defaultLatLng
-})
-
-// Marker options as ref state
-const markerOptions = ref({
-  position: center.value,
-  title: 'You are Here!',
-})
-
-// Watch center changes to update markerOptions position and zoom
-watchEffect(() => {
-  // Update marker position
-  markerOptions.value.position = center.value
-
-  // Update zoom when location is found and tracking is active
-  if (
-    !isTrackingPause.value &&
-    coords.value.latitude !== Number.POSITIVE_INFINITY &&
-    coords.value.longitude !== Number.POSITIVE_INFINITY
-  ) {
-    mapZoom.value = 14
-  }
-})
-
-// Toggle Geolocation Tracking
-const onTrackingPause = () => {
-  isTrackingPause.value = !isTrackingPause.value
-
-  // Pause Tracking
-  if (isTrackingPause.value) {
-    pause()
-    mapZoom.value = 11
-  }
-  // Resume Tracking
-  else {
-    resume()
-    mapZoom.value = 13
-  }
-}
-
 // Marker expansion state
 const expandedMarkers = ref<Set<string>>(new Set())
 
@@ -156,21 +97,13 @@ const onImageError = (event: Event) => {
         class="border-md border-solid border-opacity-100 border-primary"
         elevation="8"
         title="Citizen Report"
+        subtitle="Real-time citizen reports on the map"
       >
-        <template #subtitle>
-          <div class="text-wrap">
-            {{ `LatLng: ${coords.latitude}, ${coords.longitude}` }} <br />
-            {{ `Date/Time: ${new Date(locatedAt as number).toLocaleString()}` }}
-          </div>
-        </template>
-
         <template #append>
-          <v-btn @click="onTrackingPause" variant="text" icon>
-            <v-icon :icon="isTrackingPause ? 'mdi-refresh' : 'mdi-pause'"></v-icon>
+          <v-btn variant="text" icon>
+            <v-icon icon="mdi-refresh"></v-icon>
 
-            <v-tooltip activator="parent" location="top">
-              {{ isTrackingPause ? 'Resume Tracking' : 'Pause Tracking' }}
-            </v-tooltip>
+            <v-tooltip activator="parent" location="top"> Refresh Map </v-tooltip>
           </v-btn>
         </template>
 
@@ -185,18 +118,11 @@ const onImageError = (event: Event) => {
             <GoogleMap
               id="map"
               :api-key="apiKey"
-              :center="center"
+              :center="defaultLatLng"
               :zoom="mapZoom"
               map-id="DEMO_MAP_ID"
               style="height: 100%; width: 100%"
             >
-              <!-- User Location Marker -->
-              <!-- <AdvancedMarker :options="markerOptions">
-                <template #content>
-                  <div id="user-marker">📍 You are here!</div>
-                </template>
-              </AdvancedMarker> -->
-
               <!-- Report Markers -->
               <AdvancedMarker
                 v-for="report in reportMarkers"
