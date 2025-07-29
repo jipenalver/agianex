@@ -4,6 +4,7 @@ import { GoogleMap, AdvancedMarker } from 'vue3-google-map'
 import { useReportsStore } from '@/stores/reports'
 import { computed, ref, watchEffect } from 'vue'
 import { useGeolocation } from '@vueuse/core'
+import { useMapFilters } from './mapFilters'
 import './map.css'
 
 // Utilize pre-defined vue functions; GeoLocation
@@ -22,9 +23,35 @@ const mapZoom = ref(10)
 // Reports store
 const reportsStore = useReportsStore()
 
+// Map filters
+const { filters, reportTypeOptions, statusOptions, priorityOptions, applyFilters, clearFilters } =
+  useMapFilters()
+
+// State to track if filters are applied
+const filtersApplied = ref(false)
+
+// Computed filtered reports
+const filteredReports = computed(() => {
+  if (filtersApplied.value) {
+    return applyFilters(reportsStore.reports)
+  }
+  return reportsStore.reports
+})
+
+// Apply filters function
+const handleApplyFilters = () => {
+  filtersApplied.value = true
+}
+
+// Clear filters function
+const handleClearFilters = () => {
+  clearFilters()
+  filtersApplied.value = false
+}
+
 // Convert reports to markers format
 const reportMarkers = computed(() => {
-  return reportsStore.reports.map((report) => {
+  return filteredReports.value.map((report) => {
     // Use actual coordinates if available, otherwise use default Butuan City area
     const lat = report.latitude
       ? parseFloat(report.latitude)
@@ -229,16 +256,9 @@ const onImageError = (event: Event) => {
             <!-- Report Type Filter -->
             <v-col cols="12">
               <v-select
+                v-model="filters.reportType"
                 label="Report Type"
-                :items="[
-                  'All Reports',
-                  'Road Issues',
-                  'Public Safety',
-                  'Infrastructure',
-                  'Environmental',
-                  'Utilities',
-                  'Public Transport',
-                ]"
+                :items="reportTypeOptions"
                 variant="outlined"
                 density="compact"
               ></v-select>
@@ -247,8 +267,9 @@ const onImageError = (event: Event) => {
             <!-- Status Filter -->
             <v-col cols="12">
               <v-select
+                v-model="filters.status"
                 label="Status"
-                :items="['All Status', 'Pending', 'In Progress', 'Resolved', 'Rejected']"
+                :items="statusOptions"
                 variant="outlined"
                 density="compact"
               ></v-select>
@@ -257,8 +278,9 @@ const onImageError = (event: Event) => {
             <!-- Priority Filter -->
             <v-col cols="12">
               <v-select
+                v-model="filters.priority"
                 label="Priority"
-                :items="['All Priorities', 'Low', 'Medium', 'High', 'Critical']"
+                :items="priorityOptions"
                 variant="outlined"
                 density="compact"
               ></v-select>
@@ -267,6 +289,7 @@ const onImageError = (event: Event) => {
             <!-- Date Range -->
             <v-col cols="12">
               <v-text-field
+                v-model="filters.fromDate"
                 label="From Date"
                 type="date"
                 variant="outlined"
@@ -276,6 +299,7 @@ const onImageError = (event: Event) => {
 
             <v-col cols="12">
               <v-text-field
+                v-model="filters.toDate"
                 label="To Date"
                 type="date"
                 variant="outlined"
@@ -283,44 +307,28 @@ const onImageError = (event: Event) => {
               ></v-text-field>
             </v-col>
 
-            <!-- Location Radius -->
-            <v-col cols="12">
-              <v-slider
-                label="Search Radius (km)"
-                :min="1"
-                :max="50"
-                :step="1"
-                :model-value="10"
-                show-ticks="always"
-                tick-size="4"
-              >
-                <template #append>
-                  <v-text-field
-                    :model-value="10"
-                    type="number"
-                    style="width: 80px"
-                    density="compact"
-                    variant="outlined"
-                    hide-details
-                  ></v-text-field>
-                </template>
-              </v-slider>
-            </v-col>
-
-            <!-- Show My Reports Only -->
-            <v-col cols="12">
-              <v-checkbox label="Show my reports only" density="compact"></v-checkbox>
-            </v-col>
-
             <!-- Filter Actions -->
             <v-col cols="12">
-              <v-btn color="primary" variant="elevated" block prepend-icon="mdi-filter">
+              <v-btn
+                @click="handleApplyFilters"
+                color="primary"
+                variant="elevated"
+                block
+                prepend-icon="mdi-filter"
+              >
                 Apply Filters
               </v-btn>
             </v-col>
 
             <v-col cols="12">
-              <v-btn variant="outlined" block prepend-icon="mdi-filter-off"> Clear Filters </v-btn>
+              <v-btn
+                @click="handleClearFilters"
+                variant="outlined"
+                block
+                prepend-icon="mdi-filter-off"
+              >
+                Clear Filters
+              </v-btn>
             </v-col>
           </v-row>
         </v-card-text>
