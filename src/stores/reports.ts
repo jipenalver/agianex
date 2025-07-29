@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { supabase, supabaseAdmin } from '@/utils/supabase'
+import { supabase } from '@/utils/supabase'
 import { ref, computed } from 'vue'
 
 // Interface for report data
@@ -10,6 +10,8 @@ export interface ReportData {
   type: string
   description: string
   location: string
+  latitude?: string
+  longitude?: string
   priority: string
   status: string
   dateSubmitted: string
@@ -65,6 +67,8 @@ export const useReportsStore = defineStore('reports', () => {
       loading.value = true
       error.value = null
 
+      console.log('Fetching reports...')
+
       // Build query with optional user filtering
       let query = supabase.from('reports').select('*').order('created_at', { ascending: false })
 
@@ -75,42 +79,32 @@ export const useReportsStore = defineStore('reports', () => {
 
       const { data: reportsData, error: reportsError } = await query
 
+      console.log('Reports data:', reportsData)
+      console.log('Reports error:', reportsError)
+
       if (reportsError) {
         throw new Error(`Error fetching reports: ${reportsError.message}`)
       }
 
-      // For each report, get user details from auth.users
-      const reportsWithUserData = await Promise.all(
-        reportsData.map(async (report) => {
-          // Get user data from auth.users using admin client
-          const { data: userData, error: userError } = await supabaseAdmin.auth.admin.getUserById(
-            report.user_id,
-          )
+      // For now, let's simplify and not fetch user data to avoid potential hanging
+      const reportsWithUserData = reportsData.map((report) => {
+        return {
+          id: report.id,
+          citizen: `User ${report.user_id.substring(0, 8)}`, // Temporary simplified citizen name
+          user_id: report.user_id,
+          type: report.report_type || 'General',
+          description: report.description || 'No description provided',
+          location: report.location || 'Unknown Location',
+          latitude: report.latitude,
+          longitude: report.longitude,
+          priority: report.priority || 'Medium',
+          status: report.status || 'Pending',
+          dateSubmitted: report.created_at,
+          created_at: report.created_at,
+        }
+      })
 
-          let citizenName = 'Unknown User'
-          if (!userError && userData.user?.user_metadata) {
-            const metadata = userData.user.user_metadata as {
-              firstname?: string
-              lastname?: string
-            }
-            citizenName =
-              `${metadata.firstname || ''} ${metadata.lastname || ''}`.trim() || 'Unknown User'
-          }
-
-          return {
-            id: report.id,
-            citizen: citizenName,
-            user_id: report.user_id,
-            type: report.report_type || 'General',
-            description: report.description || 'No description provided',
-            location: report.location || 'Unknown Location',
-            priority: report.priority || 'Medium',
-            status: report.status || 'Pending',
-            dateSubmitted: report.created_at,
-            created_at: report.created_at,
-          }
-        }),
-      )
+      console.log('Processed reports:', reportsWithUserData)
 
       reports.value = reportsWithUserData
     } catch (err) {

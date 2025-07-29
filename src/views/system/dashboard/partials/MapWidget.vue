@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import { getMarkerColor, getStatusIcon, reportMarkersDummy } from './mapWidget'
+import { getMarkerColor, getStatusIcon } from './mapWidget'
 import { GoogleMap, AdvancedMarker } from 'vue3-google-map'
-import { computed, ref, watchEffect } from 'vue'
+import { computed, ref, watchEffect, onMounted } from 'vue'
+import { useReportsStore } from '@/stores/reports'
 import { useGeolocation } from '@vueuse/core'
 import './map.css'
 
@@ -18,8 +19,38 @@ const defaultLatLng = { lat: 8.928979, lng: 125.5035561 } // Butuan City Center
 const isTrackingPause = ref(false)
 const mapZoom = ref(15)
 
-// Dummy report markers data scattered within Butuan City
-const reportMarkers = ref([...reportMarkersDummy])
+// Reports store
+const reportsStore = useReportsStore()
+
+// Load reports on component mount (for admin, show all reports)
+onMounted(() => {
+  reportsStore.fetchReports()
+})
+
+// Convert reports to markers format
+const reportMarkers = computed(() => {
+  return reportsStore.reports.map((report) => {
+    // Use actual coordinates if available, otherwise use default Butuan City area
+    const lat = report.latitude
+      ? parseFloat(report.latitude)
+      : 8.928979 + (Math.random() - 0.5) * 0.1
+    const lng = report.longitude
+      ? parseFloat(report.longitude)
+      : 125.5035561 + (Math.random() - 0.5) * 0.1
+
+    return {
+      id: report.id.toString(),
+      type: report.type,
+      description: report.description,
+      priority: report.priority,
+      status: report.status,
+      citizen: report.citizen,
+      location: report.location,
+      dateSubmitted: report.dateSubmitted,
+      position: { lat, lng },
+    }
+  })
+})
 
 // Computed center for the map
 const center = computed(() => {
@@ -115,48 +146,71 @@ const isMarkerExpanded = (reportId: string) => {
         </template>
 
         <v-card-text>
-          <GoogleMap
-            id="map"
-            :api-key="apiKey"
-            :center="center"
-            :zoom="mapZoom"
-            map-id="DEMO_MAP_ID"
-          >
-            <!-- User Location Marker -->
-            <AdvancedMarker :options="markerOptions">
-              <template #content>
-                <div id="user-marker">📍 You are here!</div>
-              </template>
-            </AdvancedMarker>
+          <!-- Debug info -->
+          <div class="text-caption mb-2">
+            Loading: {{ reportsStore.loading }}, Reports count: {{ reportsStore.reports.length }}
+          </div>
 
-            <!-- Report Markers -->
-            <AdvancedMarker
-              v-for="report in reportMarkers"
-              :key="report.id"
-              :options="{ position: report.position }"
+          <!-- Loading state -->
+          <div v-if="reportsStore.loading" class="text-center pa-8">
+            <v-progress-circular indeterminate color="primary" size="48"></v-progress-circular>
+            <div class="text-h6 mt-4">Loading Reports...</div>
+          </div>
+
+          <!-- Map Container -->
+          <div v-else style="height: 400px; width: 100%">
+            <GoogleMap
+              :key="reportMarkers.length"
+              id="map"
+              :api-key="apiKey"
+              :center="center"
+              :zoom="mapZoom"
+              map-id="DEMO_MAP_ID"
+              style="height: 100%; width: 100%"
             >
-              <template #content>
-                <div
-                  class="report-marker"
-                  :class="{ expanded: isMarkerExpanded(report.id) }"
-                  :style="{ backgroundColor: getMarkerColor(report.priority) }"
-                  @click="toggleMarker(report.id)"
-                >
-                  <div class="marker-header">
-                    <span class="status-icon">{{ getStatusIcon(report.status) }}</span>
-                    <span class="report-id">{{ report.id }}</span>
-                    <span class="expand-icon">{{ isMarkerExpanded(report.id) ? '▼' : '▶' }}</span>
+              <!-- User Location Marker -->
+              <AdvancedMarker :options="markerOptions">
+                <template #content>
+                  <div id="user-marker">📍 You are here!</div>
+                </template>
+              </AdvancedMarker>
+
+              <!-- Report Markers -->
+              <AdvancedMarker
+                v-for="report in reportMarkers"
+                :key="report.id"
+                :options="{ position: report.position }"
+              >
+                <template #content>
+                  <div
+                    class="report-marker"
+                    :class="{ expanded: isMarkerExpanded(report.id) }"
+                    :style="{ backgroundColor: getMarkerColor(report.priority) }"
+                    @click="toggleMarker(report.id)"
+                  >
+                    <div class="marker-header">
+                      <span class="status-icon">{{ getStatusIcon(report.status) }}</span>
+                      <span class="report-id">RPT-{{ report.id }}</span>
+                      <span class="expand-icon">{{
+                        isMarkerExpanded(report.id) ? '▼' : '▶'
+                      }}</span>
+                    </div>
+                    <div v-if="isMarkerExpanded(report.id)" class="marker-content">
+                      <div class="report-citizen">By: {{ report.citizen }}</div>
+                      <div class="report-type">{{ report.type }}</div>
+                      <div class="report-description">{{ report.description }}</div>
+                      <div class="report-location">📍 {{ report.location }}</div>
+                      <div class="report-priority">Priority: {{ report.priority }}</div>
+                      <div class="report-status">Status: {{ report.status }}</div>
+                      <div class="report-date">
+                        {{ new Date(report.dateSubmitted).toLocaleDateString() }}
+                      </div>
+                    </div>
                   </div>
-                  <div v-if="isMarkerExpanded(report.id)" class="marker-content">
-                    <div class="report-type">{{ report.type }}</div>
-                    <div class="report-description">{{ report.description }}</div>
-                    <div class="report-priority">Priority: {{ report.priority }}</div>
-                    <div class="report-status">Status: {{ report.status }}</div>
-                  </div>
-                </div>
-              </template>
-            </AdvancedMarker>
-          </GoogleMap>
+                </template>
+              </AdvancedMarker>
+            </GoogleMap>
+          </div>
         </v-card-text>
       </v-card>
     </v-col>
