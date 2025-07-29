@@ -6,7 +6,7 @@ import DashboardView from '@/views/system/dashboard/DashboardView.vue'
 import SettingsView from '@/views/system/settings/SettingsView.vue'
 import UserRolesView from '@/views/system/admin/manage-users/UserRolesView.vue'
 import UsersView from '@/views/system/admin/manage-users/UsersView.vue'
-import ReportView from '@/views/user/ReportView.vue'
+import ReportView from '@/views/system/user/ReportView.vue'
 
 export const routes = [
   // Auth

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { reportsDummy } from '@/views/user/partials/reportsTable'
+import { reportsDummy } from '@/views/system/user/partials/reportsTable'
 import { ref, computed } from 'vue'
 
 // Dummy data for citizen reports
