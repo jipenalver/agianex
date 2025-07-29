@@ -6,7 +6,6 @@ export type SubNavigation = [string, string, string, string]
 export const adminNav: MainNavigation[] = [
   ['Users Management', 'mdi-account-box-multiple'],
   ['Citizen', 'mdi-account-multiple'],
-  ['Reports Management', 'mdi-chart-arc'],
 ]
 
 // 👉 ADMINISTRATOR; Sub Navigation; Title, Icon, Subtitle, Redirect Path;
@@ -17,10 +16,6 @@ export const adminItemsNav1: SubNavigation[] = [
 
 export const adminItemsNav2: SubNavigation[] = [
   ['Citizen Reporting', 'mdi-human-greeting-proximity', '', '/user/report'],
-]
-
-export const adminItemsNav3: SubNavigation[] = [
-  ['Admin Reports', 'mdi-chart-line', '', '/admin/reports'],
 ]
 
 // 👉 Settings Navigation; Title, Icon, Subtitle, Redirect Path

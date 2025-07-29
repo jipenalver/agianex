@@ -5,7 +5,6 @@ import {
   adminNav,
   adminItemsNav1,
   adminItemsNav2,
-  adminItemsNav3,
   settingsItemsNav,
 } from './sideNavigation'
 import { useAuthUserStore } from '@/stores/authUser'
@@ -24,7 +23,6 @@ const noAccessPages = ref<string[]>([])
 const mainNav = ref<MainNavigation[] | SubNavigation[]>([])
 const editableItemsNav1 = ref<SubNavigation[]>([...adminItemsNav1])
 const editableItemsNav2 = ref<SubNavigation[]>([...adminItemsNav2])
-const editableItemsNav3 = ref<SubNavigation[]>([...adminItemsNav3])
 
 onMounted(() => {
   mainNav.value = adminNav
@@ -34,7 +32,6 @@ onMounted(() => {
   const menuItems = [
     { items: editableItemsNav1, title: adminNav[0][0] },
     { items: editableItemsNav2, title: adminNav[1][0] },
-    { items: editableItemsNav3, title: adminNav[2][0] },
   ]
 
   menuItems.forEach(({ items, title }) => {
@@ -107,23 +104,6 @@ onMounted(() => {
         <template v-if="mainNav[1] && title === mainNav[1][0]">
           <v-list-item
             v-for="([title, icon, subtitle, to], i) in editableItemsNav2"
-            :key="i"
-            :prepend-icon="icon"
-            :subtitle="subtitle ?? undefined"
-            :to="to ?? undefined"
-            color="primary"
-            variant="flat"
-            slim
-          >
-            <template #title>
-              <span class="font-weight-black"> {{ title }} </span>
-            </template>
-          </v-list-item>
-        </template>
-
-        <template v-if="mainNav[2] && title === mainNav[2][0]">
-          <v-list-item
-            v-for="([title, icon, subtitle, to], i) in editableItemsNav3"
             :key="i"
             :prepend-icon="icon"
             :subtitle="subtitle ?? undefined"
