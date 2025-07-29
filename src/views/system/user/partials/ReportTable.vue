@@ -1,14 +1,90 @@
 <script setup lang="ts">
+import { supabase, supabaseAdmin } from '@/utils/supabase'
 import { useAuthUserStore } from '@/stores/authUser'
-import { reportsDummy } from './reportsTable'
 import { useDisplay } from 'vuetify'
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 
 const { mobile } = useDisplay()
 const authUserData = useAuthUserStore()
 
-// Dummy data for citizen reports
-const reports = ref([...reportsDummy])
+// Interface for report data
+interface ReportData {
+  id: number
+  citizen: string
+  type: string
+  description: string
+  location: string
+  priority: string
+  status: string
+  dateSubmitted: string
+}
+
+// Reports data from Supabase
+const reports = ref<ReportData[]>([])
+const loading = ref(true)
+
+// Fetch reports from Supabase
+const fetchReports = async () => {
+  try {
+    loading.value = true
+
+    // Fetch reports from Supabase
+    let query = supabase.from('reports').select('*').order('created_at', {
+      ascending: false,
+    })
+
+    if (authUserData.userRole === 'User') query = query.eq('user_id', authUserData.userData?.id)
+
+    const { data: reportsData, error: reportsError } = await query
+
+    if (reportsError) {
+      console.error('Error fetching reports:', reportsError)
+      return
+    }
+
+    // For each report, get user details from auth.users
+    const reportsWithUserData = await Promise.all(
+      reportsData.map(async (report) => {
+        // Get user data from auth.users using admin client
+        const { data: userData, error: userError } = await supabaseAdmin.auth.admin.getUserById(
+          report.user_id,
+        )
+
+        let citizenName = 'Unknown User'
+        if (!userError && userData.user?.user_metadata) {
+          const metadata = userData.user.user_metadata as {
+            firstname?: string
+            lastname?: string
+          }
+          citizenName =
+            `${metadata.firstname || ''} ${metadata.lastname || ''}`.trim() || 'Unknown User'
+        }
+
+        return {
+          id: report.id,
+          citizen: citizenName,
+          type: report.report_type || 'General',
+          description: report.description || 'No description provided',
+          location: report.location || 'Unknown Location',
+          priority: report.priority || 'Medium',
+          status: report.status || 'Pending',
+          dateSubmitted: report.created_at,
+        }
+      }),
+    )
+
+    reports.value = reportsWithUserData
+  } catch (error) {
+    console.error('Error in fetchReports:', error)
+  } finally {
+    loading.value = false
+  }
+}
+
+// Load reports on component mount
+onMounted(() => {
+  fetchReports()
+})
 
 // Table headers
 const headers = [
@@ -65,8 +141,16 @@ const getPriorityColor = (priority: string) => {
     elevation="8"
   >
     <v-card-text>
+      <!-- Loading state -->
+      <div v-if="loading" class="text-center pa-8">
+        <v-progress-circular indeterminate color="primary" size="48"></v-progress-circular>
+        <div class="text-h6 mt-4">Loading Reports...</div>
+      </div>
+
+      <!-- Data table -->
       <!-- eslint-disable vue/valid-v-slot -->
       <v-data-table
+        v-else
         :headers="headers"
         :items="reports"
         :items-per-page="5"
