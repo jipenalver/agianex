@@ -2,7 +2,7 @@ import { formActionDefault } from '@/utils/helpers/constants'
 import { type TableOptions } from '@/utils/helpers/tables'
 import { useAuthUserStore } from '@/stores/authUser'
 import { useReportsStore } from '@/stores/reports'
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 
 export function useReportsTable() {
   const authUserStore = useAuthUserStore()
@@ -43,6 +43,27 @@ export function useReportsTable() {
       tableOptions.value.isLoading = false
     }
   }
+
+  // Initialize data on mount
+  onMounted(async () => {
+    // Load initial data for both table and map widget
+    await onLoadItems({
+      page: tableOptions.value.page,
+      itemsPerPage: tableOptions.value.itemsPerPage,
+      sortBy: tableOptions.value.sortBy,
+    })
+
+    // Also fetch all reports for the map widget and statistics
+    try {
+      if (authUserStore.userRole === 'User' && authUserStore.userData?.id) {
+        await reportsStore.fetchReports(authUserStore.userData.id)
+      } else {
+        await reportsStore.fetchReports()
+      }
+    } catch (error) {
+      console.error('Error loading all reports for map:', error)
+    }
+  })
 
   // Expose State and Actions
   return {
