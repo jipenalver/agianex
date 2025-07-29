@@ -21,7 +21,6 @@ const {
   formAction,
   refVForm,
   reportTypeOptions,
-  priorityOptions,
   statusOptions,
   onFormSubmit,
   onFormReset,
@@ -45,21 +44,11 @@ const {
       <v-form ref="refVForm" @submit.prevent="onFormSubmit">
         <v-card-text>
           <v-row dense>
-            <v-col cols="12">
+            <v-col cols="12" sm="6">
               <v-select
                 v-model="formData.report_type"
                 label="Report Type"
                 :items="reportTypeOptions"
-                variant="outlined"
-                :rules="[requiredValidator]"
-              ></v-select>
-            </v-col>
-
-            <v-col cols="12" sm="6">
-              <v-select
-                v-model="formData.priority"
-                label="Priority"
-                :items="priorityOptions"
                 variant="outlined"
                 :rules="[requiredValidator]"
               ></v-select>

@@ -38,7 +38,6 @@ interface RawReportData {
 export interface UpdateReportData {
   id: number
   report_type?: string
-  priority?: string
   status?: string
 }
 
@@ -212,7 +211,6 @@ export const useReportsStore = defineStore('reports', () => {
         .from('reports')
         .update({
           report_type: reportData.report_type,
-          priority: reportData.priority,
           status: reportData.status,
         })
         .eq('id', reportData.id)

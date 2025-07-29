@@ -17,14 +17,12 @@ export function useReportsFormDialog(
   const formDataDefault = {
     id: undefined as number | undefined,
     report_type: '',
-    priority: '',
     status: '',
   }
 
   type FormData = {
     id?: number | undefined
     report_type: string
-    priority: string
     status: string
   }
 
@@ -43,8 +41,6 @@ export function useReportsFormDialog(
     'General',
   ]
 
-  const priorityOptions = ['Low', 'Medium', 'High', 'Critical']
-
   const statusOptions = ['Pending', 'In Progress', 'Resolved', 'Rejected']
 
   watch(
@@ -54,7 +50,6 @@ export function useReportsFormDialog(
         formData.value = {
           id: props.itemData.id,
           report_type: props.itemData.type || 'General',
-          priority: props.itemData.priority || 'Medium',
           status: props.itemData.status || 'Pending',
         }
       } else {
@@ -76,7 +71,6 @@ export function useReportsFormDialog(
       const updateData: UpdateReportData = {
         id: formData.value.id,
         report_type: formData.value.report_type,
-        priority: formData.value.priority,
         status: formData.value.status,
       }
 
@@ -101,7 +95,6 @@ export function useReportsFormDialog(
 
       // Refresh the table data
       await reportsStore.getReportsTable(props.tableOptions)
-      await reportsStore.fetchReports()
 
       // Close dialog after successful update
       setTimeout(() => {
@@ -137,7 +130,6 @@ export function useReportsFormDialog(
     formAction,
     refVForm,
     reportTypeOptions,
-    priorityOptions,
     statusOptions,
     onFormSubmit,
     onFormReset,
