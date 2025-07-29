@@ -31,10 +31,12 @@
     "@ionic/pwa-elements": "^3.3.0",
     "@supabase/supabase-js": "^2.52.0",
     "@vueuse/core": "^13.5.0",
+    "apexcharts": "^5.3.2",
     "groq-sdk": "^0.29.0",
     "pinia": "^3.0.3",
     "vue": "^3.5.17",
     "vue-router": "^4.5.1",
+    "vue3-apexcharts": "^1.8.0",
     "vue3-google-map": "^0.23.0",
     "vuetify": "^3.9.2",
     "webfontloader": "^1.6.28"
