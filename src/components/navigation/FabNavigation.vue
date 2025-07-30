@@ -14,6 +14,10 @@ const authUserData = useAuthUserStore()
 
 const formAction = ref({ ...formActionDefault })
 
+// Loading state for submission process
+const isSubmitting = ref(false)
+const submissionStep = ref('')
+
 // Show notification using AppAlert
 const showNotification = (message: string, status: number) => {
   formAction.value.formMessage = message
@@ -165,6 +169,10 @@ Focus on infrastructure, roads, public safety, environmental issues, and communi
 // Save report to Supabase database and storage
 const saveReportToSupabase = async (imageFile: File | Blob, fileName: string) => {
   try {
+    // Start loading state
+    isSubmitting.value = true
+    submissionStep.value = 'Preparing report...'
+
     // Get coordinates
     const latitude =
       coords.value.latitude !== Number.POSITIVE_INFINITY ? coords.value.latitude : null
@@ -174,10 +182,12 @@ const saveReportToSupabase = async (imageFile: File | Blob, fileName: string) =>
     // Get address from coordinates if available
     let location = 'Location not available'
     if (latitude && longitude) {
+      submissionStep.value = 'Getting location details...'
       location = await getAddressFromCoordinates(latitude, longitude)
     }
 
     // First, insert the report record to get the ID
+    submissionStep.value = 'Creating report record...'
     const { data: reportData, error: reportError } = await supabase
       .from('reports')
       .insert({
@@ -197,6 +207,7 @@ const saveReportToSupabase = async (imageFile: File | Blob, fileName: string) =>
     }
 
     // Upload image with report ID in filename
+    submissionStep.value = 'Uploading image...'
     const reportImagePath = `reports/${reportData.id}-${fileName}`
     const { data: uploadData, error: uploadError } = await supabase.storage
       .from('agianex')
@@ -216,10 +227,11 @@ const saveReportToSupabase = async (imageFile: File | Blob, fileName: string) =>
     const imageUrl = imageData.publicUrl
 
     // Analyze image with AI to get description and priority
-    showNotification('Analyzing image...', 200)
+    submissionStep.value = 'Analyzing image with AI...'
     const { description, priority } = await analyzeImageWithAI(imageUrl)
 
     // Update report with image path, AI-generated description, and priority
+    submissionStep.value = 'Finalizing report...'
     const { error: updateError } = await supabase
       .from('reports')
       .update({
@@ -235,12 +247,21 @@ const saveReportToSupabase = async (imageFile: File | Blob, fileName: string) =>
     }
 
     console.log('Report saved successfully:', reportData)
+
+    // Small delay to show completion
+    submissionStep.value = 'Report submitted successfully!'
+    await new Promise((resolve) => setTimeout(resolve, 1000))
+
     showNotification(`Report submitted successfully!`, 200)
     return reportData
   } catch (error) {
     console.error('Error saving report:', error)
     showNotification('Failed to save report. Please try again.', 400)
     return null
+  } finally {
+    // Hide loading state
+    isSubmitting.value = false
+    submissionStep.value = ''
   }
 }
 
@@ -362,12 +383,40 @@ const browseImages = async () => {
 </script>
 
 <template>
+  <!-- App Alert for notifications -->
   <AppAlert
     v-model:is-alert-visible="formAction.formAlert"
     :form-message="formAction.formMessage"
     :form-status="formAction.formStatus"
   ></AppAlert>
 
+  <!-- Loading Modal for submission process -->
+  <v-dialog v-model="isSubmitting" persistent max-width="400">
+    <v-card class="pa-4">
+      <v-card-title class="text-h6 text-center">
+        <v-icon class="me-2" color="primary">mdi-cloud-upload</v-icon>
+        Submitting Report
+      </v-card-title>
+
+      <v-card-text class="text-center">
+        <v-progress-circular
+          indeterminate
+          color="primary"
+          size="64"
+          width="6"
+          class="mb-4"
+        ></v-progress-circular>
+
+        <div class="text-body-1 font-weight-medium mb-2">
+          {{ submissionStep }}
+        </div>
+
+        <div class="text-caption text-grey">Please wait while we process your report...</div>
+      </v-card-text>
+    </v-card>
+  </v-dialog>
+
+  <!-- FAB Navigation -->
   <v-fab id="fab" variant="elevated" color="primary" size="x-large" icon app>
     <v-icon>{{ isFabOpen ? 'mdi-close' : 'mdi-camera-plus' }}</v-icon>
     <v-speed-dial
