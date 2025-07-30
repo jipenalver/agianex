@@ -343,16 +343,14 @@ const browseImages = async () => {
       const input = document.createElement('input')
       input.type = 'file'
       input.accept = 'image/*'
-      input.multiple = true
+      input.multiple = false // Only allow single file selection to ensure proper processing
 
       input.onchange = async (event) => {
         const files = (event.target as HTMLInputElement).files
         if (files && files.length > 0) {
-          for (let i = 0; i < files.length; i++) {
-            const file = files[i]
-            const fileName = `selected_${Date.now()}_${i}.${file.name.split('.').pop()}`
-            await saveReportToSupabase(file, fileName)
-          }
+          const file = files[0] // Process only the first file
+          const fileName = `selected_${Date.now()}.${file.name.split('.').pop()}`
+          await saveReportToSupabase(file, fileName)
         }
       }
 
