@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import AppAlert from '@/components/common/AppAlert.vue'
 import ReportsFormDialog from './ReportsFormDialog.vue'
+import ReportsViewDialog from './ReportsViewDialog.vue'
 import type { ReportData } from '@/stores/reports'
 import { useReportsTable } from './reportsTable'
 import { useDate, useDisplay } from 'vuetify'
@@ -11,13 +12,20 @@ const { mobile } = useDisplay()
 const { tableOptions, formAction, onLoadItems, reportsStore, authUserStore } = useReportsTable()
 
 // Dialog state
-const isDialogVisible = ref(false)
+const isEditDialogVisible = ref(false)
+const isViewDialogVisible = ref(false)
 const selectedReport = ref<ReportData | null>(null)
 
 // Open edit dialog
 const openEditDialog = (report: ReportData) => {
   selectedReport.value = report
-  isDialogVisible.value = true
+  isEditDialogVisible.value = true
+}
+
+// Open view dialog
+const openViewDialog = (report: ReportData) => {
+  selectedReport.value = report
+  isViewDialogVisible.value = true
 }
 
 // Table headers
@@ -141,12 +149,18 @@ const getPriorityColor = (priority: string) => {
         <!-- Custom slot for actions column -->
         <template #item.actions="{ item }">
           <div class="d-flex" :class="mobile ? 'justify-end' : 'justify-center'">
+            <v-btn @click="openViewDialog(item)" size="large" variant="text" density="compact" icon>
+              <v-icon>mdi-eye</v-icon>
+              <v-tooltip activator="parent" location="top"> View Report </v-tooltip>
+            </v-btn>
+
             <v-btn
               @click="openEditDialog(item)"
-              icon="mdi-pencil"
-              size="small"
+              size="large"
               variant="text"
               color="warning"
+              density="compact"
+              icon
             >
               <v-icon>mdi-pencil</v-icon>
               <v-tooltip activator="parent" location="top"> Edit Report </v-tooltip>
@@ -168,8 +182,11 @@ const getPriorityColor = (priority: string) => {
 
   <!-- Edit Report Dialog -->
   <ReportsFormDialog
-    v-model:is-dialog-visible="isDialogVisible"
+    v-model:is-dialog-visible="isEditDialogVisible"
     :item-data="selectedReport"
     :table-options="tableOptions"
   />
+
+  <!-- View Report Dialog -->
+  <ReportsViewDialog v-model:is-dialog-visible="isViewDialogVisible" :item-data="selectedReport" />
 </template>
