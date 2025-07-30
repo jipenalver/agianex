@@ -26,14 +26,6 @@ const filtersApplied = ref(false)
 // Loading state for refresh
 const refreshing = ref(false)
 
-// Computed filtered reports
-const filteredReports = computed(() => {
-  if (filtersApplied.value) {
-    return applyFilters(reportsStore.reports)
-  }
-  return reportsStore.reports
-})
-
 // Apply filters function
 const handleApplyFilters = () => {
   filtersApplied.value = true
@@ -45,9 +37,9 @@ const handleClearFilters = () => {
   filtersApplied.value = false
 }
 
-// Convert reports to markers format
+// Convert ALL reports to markers format (no filtering here)
 const reportMarkers = computed(() => {
-  return filteredReports.value.map((report) => {
+  return reportsStore.reports.map((report) => {
     // Use actual coordinates if available, otherwise use default Butuan City area
     const lat = report.latitude
       ? parseFloat(report.latitude)
@@ -64,11 +56,29 @@ const reportMarkers = computed(() => {
       status: report.status,
       citizen: report.citizen,
       location: report.location,
-      image_path: report.image_path,
+      image_path: report.image_path || '',
       dateSubmitted: report.dateSubmitted,
       position: { lat, lng },
+      originalReport: report, // Keep reference to original report for filtering
     }
   })
+})
+
+// Check if a marker should be visible based on filters
+const isMarkerVisible = (marker: (typeof reportMarkers.value)[0]) => {
+  if (!filtersApplied.value) {
+    return true // Show all markers when no filters are applied
+  }
+
+  // Use the original report data for filtering
+  const singleReportArray = [marker.originalReport]
+  const filteredArray = applyFilters(singleReportArray)
+  return filteredArray.length > 0
+}
+
+// Count visible markers for display
+const visibleMarkersCount = computed(() => {
+  return reportMarkers.value.filter((marker) => isMarkerVisible(marker)).length
 })
 
 // Marker expansion state
@@ -122,7 +132,11 @@ const refreshMap = async () => {
         class="border-md border-solid border-opacity-100 border-primary"
         elevation="8"
         title="Citizen Report"
-        subtitle="Real-time citizen reports on the map"
+        :subtitle="
+          filtersApplied
+            ? `Showing ${visibleMarkersCount} of ${reportMarkers.length} reports`
+            : 'Real-time citizen reports on the map'
+        "
       >
         <template #append>
           <v-btn
@@ -155,50 +169,51 @@ const refreshMap = async () => {
               style="height: 100%; width: 100%"
             >
               <!-- Report Markers -->
-              <AdvancedMarker
-                v-for="report in reportMarkers"
-                :key="report.id"
-                :options="{ position: report.position }"
-              >
-                <template #content>
-                  <div
-                    class="report-marker"
-                    :class="{ expanded: isMarkerExpanded(report.id) }"
-                    :style="{ backgroundColor: getMarkerColor(report.priority) }"
-                    @click="toggleMarker(report.id)"
-                  >
-                    <div class="marker-header">
-                      <span class="status-icon">{{ getStatusIcon(report.status) }}</span>
-                      <span class="report-id">RPT-{{ report.id }}</span>
-                      <span class="expand-icon">{{
-                        isMarkerExpanded(report.id) ? '▼' : '▶'
-                      }}</span>
-                    </div>
-                    <div v-if="isMarkerExpanded(report.id)" class="marker-content">
-                      <div class="report-citizen">By: {{ report.citizen }}</div>
-                      <div class="report-type">{{ report.type }}</div>
-                      <div class="report-description">{{ report.description }}</div>
-                      <div class="report-location">📍 {{ report.location }}</div>
-
-                      <!-- Report Image -->
-                      <div v-if="report.image_path" class="report-image-container">
-                        <img
-                          :src="report.image_path"
-                          :alt="`Report ${report.id} image`"
-                          class="report-image"
-                          @error="onImageError"
-                        />
+              <template v-for="marker in reportMarkers" :key="marker.id">
+                <AdvancedMarker
+                  v-if="isMarkerVisible(marker)"
+                  :options="{ position: marker.position }"
+                >
+                  <template #content>
+                    <div
+                      class="report-marker"
+                      :class="{ expanded: isMarkerExpanded(marker.id) }"
+                      :style="{ backgroundColor: getMarkerColor(marker.priority) }"
+                      @click="toggleMarker(marker.id)"
+                    >
+                      <div class="marker-header">
+                        <span class="status-icon">{{ getStatusIcon(marker.status) }}</span>
+                        <span class="report-id">RPT-{{ marker.id }}</span>
+                        <span class="expand-icon">{{
+                          isMarkerExpanded(marker.id) ? '▼' : '▶'
+                        }}</span>
                       </div>
+                      <div v-if="isMarkerExpanded(marker.id)" class="marker-content">
+                        <div class="report-citizen">By: {{ marker.citizen }}</div>
+                        <div class="report-type">{{ marker.type }}</div>
+                        <div class="report-description">{{ marker.description }}</div>
+                        <div class="report-location">📍 {{ marker.location }}</div>
 
-                      <div class="report-priority">Priority: {{ report.priority }}</div>
-                      <div class="report-status">Status: {{ report.status }}</div>
-                      <div class="report-date">
-                        {{ date.format(report.dateSubmitted, 'fullDate') }}
+                        <!-- Report Image -->
+                        <div v-if="marker.image_path" class="report-image-container">
+                          <img
+                            :src="marker.image_path"
+                            :alt="`Report ${marker.id} image`"
+                            class="report-image"
+                            @error="onImageError"
+                          />
+                        </div>
+
+                        <div class="report-priority">Priority: {{ marker.priority }}</div>
+                        <div class="report-status">Status: {{ marker.status }}</div>
+                        <div class="report-date">
+                          {{ date.format(marker.dateSubmitted, 'fullDate') }}
+                        </div>
                       </div>
                     </div>
-                  </div>
-                </template>
-              </AdvancedMarker>
+                  </template>
+                </AdvancedMarker>
+              </template>
             </GoogleMap>
           </div>
         </v-card-text>
@@ -303,5 +318,5 @@ const refreshMap = async () => {
 </template>
 
 <style scoped>
-@import './map.css';
+/* @import './map.css'; */
 </style>
