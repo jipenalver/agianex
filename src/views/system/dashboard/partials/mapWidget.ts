@@ -23,6 +23,8 @@ export const getStatusIcon = (status: string) => {
       return '⏳'
     case 'Pending':
       return '⏸'
+    case 'Rejected':
+      return '✖'
     default:
       return '❓'
   }
