@@ -120,9 +120,7 @@ const getPriorityColor = (priority: string) => {
         <template #item.location="{ item }">
           <div class="text-wrap" :class="mobile ? 'text-justify' : ''" style="max-width: 550px">
             {{
-              item.location === 'Location not found'
-                ? item.latitude + ', ' + item.longitude
-                : item.location
+              item.location.includes('not') ? item.latitude + ', ' + item.longitude : item.location
             }}
           </div>
         </template>

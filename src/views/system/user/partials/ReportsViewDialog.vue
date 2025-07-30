@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { ReportData } from '@/stores/reports'
-import { useDate } from 'vuetify'
+import { useDate, useDisplay } from 'vuetify'
 import { computed } from 'vue'
 
 interface Props {
@@ -15,6 +15,7 @@ const emit = defineEmits<{
 }>()
 
 const date = useDate()
+const { xs } = useDisplay()
 
 const dialogValue = computed({
   get: () => props.isDialogVisible,
@@ -93,7 +94,7 @@ const viewFullImage = () => {
       <v-card-text class="pa-0">
         <v-container fluid class="pa-6">
           <v-row>
-            <!-- Left Column: Basic Information -->
+            <!-- Left Column: Basic Information & Description -->
             <v-col cols="12" md="6">
               <v-card variant="outlined" class="mb-4">
                 <v-card-title class="bg-grey-lighten-4">
@@ -142,8 +143,24 @@ const viewFullImage = () => {
                 </v-card-text>
               </v-card>
 
-              <!-- Location Information -->
+              <!-- Description -->
               <v-card variant="outlined">
+                <v-card-title class="bg-grey-lighten-4">
+                  <v-icon class="me-2">mdi-text</v-icon>
+                  Description
+                </v-card-title>
+                <v-card-text class="pa-4">
+                  <div class="text-body-1" style="white-space: pre-wrap; line-height: 1.6">
+                    {{ itemData.description || 'No description provided.' }}
+                  </div>
+                </v-card-text>
+              </v-card>
+            </v-col>
+
+            <!-- Right Column: Location Information and Image -->
+            <v-col cols="12" md="6">
+              <!-- Location Information -->
+              <v-card variant="outlined" class="mb-4" :min-height="xs ? '' : '345'">
                 <v-card-title class="bg-grey-lighten-4">
                   <v-icon class="me-2">mdi-map-marker</v-icon>
                   Location Information
@@ -178,22 +195,6 @@ const viewFullImage = () => {
                       </v-btn>
                     </v-col>
                   </v-row>
-                </v-card-text>
-              </v-card>
-            </v-col>
-
-            <!-- Right Column: Description and Image -->
-            <v-col cols="12" md="6">
-              <!-- Description -->
-              <v-card variant="outlined" class="mb-4">
-                <v-card-title class="bg-grey-lighten-4">
-                  <v-icon class="me-2">mdi-text</v-icon>
-                  Description
-                </v-card-title>
-                <v-card-text class="pa-4">
-                  <div class="text-body-1" style="white-space: pre-wrap; line-height: 1.6">
-                    {{ itemData.description || 'No description provided.' }}
-                  </div>
                 </v-card-text>
               </v-card>
 
@@ -263,7 +264,7 @@ const viewFullImage = () => {
       </v-card-text>
 
       <!-- Footer Actions -->
-      <v-card-actions class="bg-grey-lighten-5 pa-4">
+      <v-card-actions class="border-t-md border-primary border-opacity-100 pa-4">
         <v-spacer></v-spacer>
         <v-btn @click="dialogValue = false" color="primary" variant="outlined"> Close </v-btn>
       </v-card-actions>
