@@ -42,6 +42,7 @@
     "webfontloader": "^1.6.28"
   },
   "devDependencies": {
+    "@capacitor/assets": "^3.0.5",
     "@capacitor/cli": "7.4.2",
     "@mdi/font": "^7.4.47",
     "@tsconfig/node22": "^22.0.2",
