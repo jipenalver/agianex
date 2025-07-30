@@ -175,7 +175,7 @@ const peakDay = computed(() => {
       <template v-else>
         <!-- Chart -->
         <div class="chart-container">
-          <VueApexCharts type="line" height="426" :options="chartOptions" :series="chartSeries" />
+          <VueApexCharts type="line" height="428" :options="chartOptions" :series="chartSeries" />
         </div>
 
         <v-divider class="my-4"></v-divider>
