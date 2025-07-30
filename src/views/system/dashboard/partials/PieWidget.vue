@@ -5,15 +5,15 @@ import { computed, ref } from 'vue'
 import VueApexCharts from 'vue3-apexcharts'
 
 const reportsStore = useReportsStore()
-const { reports, loading } = storeToRefs(reportsStore)
+const { loading } = storeToRefs(reportsStore)
 
 // Active tab
 const activeTab = ref('status')
 
 // Color mappings for different categories
 const statusColors: Record<string, string> = {
-  Pending: '#FF9800', // Orange
-  'In Progress': '#2196F3', // Blue
+  Pending: '#2196F3', // Blue
+  'In Progress': '#FF9800', // Orange
   Resolved: '#4CAF50', // Green
   Rejected: '#F44336', // Red
 }
@@ -44,7 +44,7 @@ const statusData = computed(() => {
     Rejected: 0,
   }
 
-  reports.value.forEach((report) => {
+  reportsStore.reports.forEach((report) => {
     const status = report.status || 'Pending'
     if (statusCounts.hasOwnProperty(status)) {
       statusCounts[status]++
@@ -64,7 +64,7 @@ const statusData = computed(() => {
 const reportTypeData = computed(() => {
   const typeCounts: Record<string, number> = {}
 
-  reports.value.forEach((report) => {
+  reportsStore.reports.forEach((report) => {
     const type = report.type || 'General'
     typeCounts[type] = (typeCounts[type] || 0) + 1
   })
@@ -87,7 +87,7 @@ const priorityData = computed(() => {
     Low: 0,
   }
 
-  reports.value.forEach((report) => {
+  reportsStore.reports.forEach((report) => {
     const priority = report.priority || 'Medium'
     if (priorityCounts.hasOwnProperty(priority)) {
       priorityCounts[priority]++
