@@ -1,8 +1,11 @@
 <script setup lang="ts">
 import { useReportsStore } from '@/stores/reports'
+import VueApexCharts from 'vue3-apexcharts'
+import { useDisplay } from 'vuetify'
 import { storeToRefs } from 'pinia'
 import { computed } from 'vue'
-import VueApexCharts from 'vue3-apexcharts'
+
+const { xs } = useDisplay()
 
 const reportsStore = useReportsStore()
 const { reports, loading } = storeToRefs(reportsStore)
@@ -163,6 +166,7 @@ const peakDay = computed(() => {
     subtitle="Last 7 days activity"
     class="border-md border-solid border-opacity-100 border-primary"
     elevation="8"
+    :height="xs ? '' : '709'"
   >
     <v-card-text>
       <!-- Loading state -->

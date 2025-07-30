@@ -1,8 +1,11 @@
 <script setup lang="ts">
 import { useReportsStore } from '@/stores/reports'
+import VueApexCharts from 'vue3-apexcharts'
+import { useDisplay } from 'vuetify'
 import { storeToRefs } from 'pinia'
 import { computed, ref } from 'vue'
-import VueApexCharts from 'vue3-apexcharts'
+
+const { xs } = useDisplay()
 
 const reportsStore = useReportsStore()
 const { loading } = storeToRefs(reportsStore)
@@ -221,6 +224,7 @@ const handleLegendClick = (dataPointIndex: number) => {
     subtitle="Comprehensive breakdown of reports by different categories"
     class="border-md border-solid border-opacity-100 border-primary"
     elevation="8"
+    :height="xs ? '' : '780'"
   >
     <!-- Tabs -->
     <v-tabs v-model="activeTab" color="primary" class="px-4">
