@@ -31,16 +31,14 @@ const openViewDialog = (report: ReportData) => {
 // Table headers
 const headers = [
   { title: 'Report ID', key: 'id', sortable: true },
-  { title: 'Citizen', key: 'citizen', sortable: true },
+  { title: 'Citizen', key: 'citizen', sortable: false },
   { title: 'Type', key: 'type', sortable: true },
   { title: 'Description', key: 'description', sortable: false },
   { title: 'Location', key: 'location', sortable: true },
   { title: 'Priority', key: 'priority', sortable: true },
   { title: 'Status', key: 'status', sortable: true },
   { title: 'Date', key: 'dateSubmitted', sortable: true },
-  ...(authUserStore.userRole !== 'User'
-    ? [{ title: 'Actions', key: 'actions', sortable: false }]
-    : []),
+  { title: 'Actions', key: 'actions', sortable: false },
 ]
 
 // Status colors
@@ -153,6 +151,7 @@ const getPriorityColor = (priority: string) => {
             </v-btn>
 
             <v-btn
+              v-if="authUserStore.userRole !== 'User'"
               @click="openEditDialog(item)"
               size="large"
               variant="text"

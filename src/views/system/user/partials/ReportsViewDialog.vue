@@ -15,7 +15,7 @@ const emit = defineEmits<{
 }>()
 
 const date = useDate()
-const { xs } = useDisplay()
+const { mdAndDown, xs } = useDisplay()
 
 const dialogValue = computed({
   get: () => props.isDialogVisible,
@@ -77,7 +77,7 @@ const viewFullImage = () => {
 </script>
 
 <template>
-  <v-dialog v-model="dialogValue" max-width="900" persistent scrollable>
+  <v-dialog v-model="dialogValue" max-width="900" :fullscreen="mdAndDown" persistent scrollable>
     <v-card v-if="itemData" class="pa-0">
       <!-- Header -->
       <v-card-title class="d-flex align-center justify-space-between bg-primary text-white">
