@@ -145,7 +145,7 @@ const refreshMap = async () => {
             <div class="text-h6 mt-4">Loading Reports...</div>
           </div>
           <!-- Map Container -->
-          <div v-else style="height: 495px; width: 100%">
+          <div v-else style="height: 710px; width: 100%">
             <GoogleMap
               id="map"
               :api-key="apiKey"
