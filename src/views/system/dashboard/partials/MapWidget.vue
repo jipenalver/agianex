@@ -4,6 +4,9 @@ import { GoogleMap, AdvancedMarker } from 'vue3-google-map'
 import { useReportsStore } from '@/stores/reports'
 import { useMapFilters } from './mapFilters'
 import { computed, ref } from 'vue'
+import { useDate } from 'vuetify'
+
+const date = useDate()
 
 // Load Variables
 const mapZoom = ref(12)
@@ -190,7 +193,7 @@ const refreshMap = async () => {
                       <div class="report-priority">Priority: {{ report.priority }}</div>
                       <div class="report-status">Status: {{ report.status }}</div>
                       <div class="report-date">
-                        {{ new Date(report.dateSubmitted).toLocaleDateString() }}
+                        {{ date.format(report.dateSubmitted, 'fullDate') }}
                       </div>
                     </div>
                   </div>
