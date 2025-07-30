@@ -16,6 +16,9 @@ const isEditDialogVisible = ref(false)
 const isViewDialogVisible = ref(false)
 const selectedReport = ref<ReportData | null>(null)
 
+// Loading state for refresh
+const refreshing = ref(false)
+
 // Open edit dialog
 const openEditDialog = (report: ReportData) => {
   selectedReport.value = report
@@ -72,6 +75,22 @@ const getPriorityColor = (priority: string) => {
       return 'default'
   }
 }
+
+// Refresh map data
+const refreshMap = async () => {
+  try {
+    refreshing.value = true
+
+    // Refresh reports data from the store
+    await reportsStore.refreshReports()
+
+    console.log('Map refreshed with updated reports data')
+  } catch (error) {
+    console.error('Error refreshing map:', error)
+  } finally {
+    refreshing.value = false
+  }
+}
 </script>
 
 <template>
@@ -80,6 +99,14 @@ const getPriorityColor = (priority: string) => {
     class="border-md border-solid border-opacity-100 border-primary"
     elevation="8"
   >
+    <template #append>
+      <v-btn variant="text" icon @click="refreshMap" :loading="refreshing" :disabled="refreshing">
+        <v-icon icon="mdi-refresh"></v-icon>
+
+        <v-tooltip activator="parent" location="top"> Refresh Map </v-tooltip>
+      </v-btn>
+    </template>
+
     <v-card-text>
       <!-- Alert for errors -->
       <AppAlert

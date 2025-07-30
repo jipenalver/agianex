@@ -54,7 +54,7 @@ onMounted(() => {
     :temporary="mobile"
     :permanent="!mobile"
     :width="300"
-    close-delay="2000"
+    close-delay="1000"
     expand-on-hover
     rail
   >
