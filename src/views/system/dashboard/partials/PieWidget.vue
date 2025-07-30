@@ -54,7 +54,7 @@ const chartColors = computed(() => statusData.value.map((item) => item.color))
 const chartOptions = computed(() => ({
   chart: {
     type: 'pie',
-    height: 280,
+    height: 500,
     fontFamily: 'Roboto, sans-serif',
   },
   labels: chartLabels.value,
