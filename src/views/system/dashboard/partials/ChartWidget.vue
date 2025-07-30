@@ -39,7 +39,7 @@ const chartData = computed(() => {
 const chartOptions = computed(() => ({
   chart: {
     type: 'line',
-    height: 300,
+    height: 330,
     toolbar: {
       show: false,
     },
