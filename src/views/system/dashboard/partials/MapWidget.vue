@@ -192,7 +192,14 @@ const refreshMap = async () => {
                         <div class="report-citizen">By: {{ marker.citizen }}</div>
                         <div class="report-type">{{ marker.type }}</div>
                         <div class="report-description">{{ marker.description }}</div>
-                        <div class="report-location">📍 {{ marker.location }}</div>
+                        <div class="report-location">
+                          📍
+                          {{
+                            marker.location.includes('not')
+                              ? `${marker.position.lat}, ${marker.position.lng}`
+                              : marker.location
+                          }}
+                        </div>
 
                         <!-- Report Image -->
                         <div v-if="marker.image_path" class="report-image-container">
@@ -318,5 +325,5 @@ const refreshMap = async () => {
 </template>
 
 <style scoped>
-/* @import './map.css'; */
+@import './map.css';
 </style>
