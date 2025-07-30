@@ -16,12 +16,12 @@ const chartData = computed(() => {
   for (let i = 6; i >= 0; i--) {
     const date = new Date(today)
     date.setDate(date.getDate() - i)
-    const dateString = date.toISOString().split('T')[0]
+    const dateString = date.toLocaleDateString()
     const dayName = date.toLocaleDateString('en-US', { weekday: 'short' })
 
     // Count reports for this day
     const dayReports = reports.value.filter((report) => {
-      const reportDate = new Date(report.created_at).toISOString().split('T')[0]
+      const reportDate = new Date(report.created_at).toLocaleDateString()
       return reportDate === dateString
     }).length
 

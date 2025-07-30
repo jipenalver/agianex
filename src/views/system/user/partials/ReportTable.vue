@@ -3,9 +3,10 @@ import AppAlert from '@/components/common/AppAlert.vue'
 import ReportsFormDialog from './ReportsFormDialog.vue'
 import type { ReportData } from '@/stores/reports'
 import { useReportsTable } from './reportsTable'
-import { useDisplay } from 'vuetify'
+import { useDate, useDisplay } from 'vuetify'
 import { ref } from 'vue'
 
+const date = useDate()
 const { mobile } = useDisplay()
 const { tableOptions, formAction, onLoadItems, reportsStore, authUserStore } = useReportsTable()
 
@@ -95,13 +96,26 @@ const getPriorityColor = (priority: string) => {
         :hide-default-header="mobile"
         :mobile="mobile"
       >
+        <!-- Custom slot for id column -->
+        <template #item.id="{ item }">
+          <span class="font-weight-black"> RPT-{{ item.id }} </span>
+        </template>
+
         <!-- Custom slot for description column -->
         <template #item.description="{ item }">
-          <div class="text-truncate" style="max-width: 200px">
+          <div class="text-wrap" :class="mobile ? 'text-justify' : ''" style="max-width: 550px">
             {{ item.description }}
-            <v-tooltip activator="parent" location="top">
-              {{ item.description }}
-            </v-tooltip>
+          </div>
+        </template>
+
+        <!-- Custom slot for location column -->
+        <template #item.location="{ item }">
+          <div class="text-wrap" :class="mobile ? 'text-justify' : ''" style="max-width: 550px">
+            {{
+              item.location === 'Location not found'
+                ? item.latitude + ', ' + item.longitude
+                : item.location
+            }}
           </div>
         </template>
 
@@ -121,7 +135,7 @@ const getPriorityColor = (priority: string) => {
 
         <!-- Custom slot for date column -->
         <template #item.dateSubmitted="{ item }">
-          {{ new Date(item.dateSubmitted).toLocaleDateString() }}
+          {{ date.format(item.dateSubmitted, 'fullDate') }}
         </template>
 
         <!-- Custom slot for actions column -->
