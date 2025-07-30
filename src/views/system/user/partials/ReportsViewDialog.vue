@@ -144,7 +144,7 @@ const viewFullImage = () => {
               </v-card>
 
               <!-- Description -->
-              <v-card variant="outlined" min-height="407">
+              <v-card variant="outlined" height="407">
                 <v-card-title class="bg-grey-lighten-4">
                   <v-icon class="me-2">mdi-text</v-icon>
                   Description
@@ -160,7 +160,7 @@ const viewFullImage = () => {
             <!-- Right Column: Location Information and Image -->
             <v-col cols="12" md="6">
               <!-- Location Information -->
-              <v-card variant="outlined" class="mb-4" :min-height="xs ? '' : '345'">
+              <v-card variant="outlined" class="mb-4" :min-height="xs ? '' : '347'">
                 <v-card-title class="bg-grey-lighten-4">
                   <v-icon class="me-2">mdi-map-marker</v-icon>
                   Location Information
@@ -199,7 +199,7 @@ const viewFullImage = () => {
               </v-card>
 
               <!-- Image -->
-              <v-card variant="outlined" v-if="itemData.image_path">
+              <v-card variant="outlined" v-if="itemData.image_path" height="xs ? '' : '360'">
                 <v-card-title class="bg-grey-lighten-4">
                   <v-icon class="me-2">mdi-image</v-icon>
                   Report Image
@@ -211,7 +211,7 @@ const viewFullImage = () => {
                       alt="Report Image"
                       class="mx-auto rounded cursor-pointer"
                       max-width="100%"
-                      max-height="285"
+                      height="284px"
                       cover
                       @click="viewFullImage"
                     >
