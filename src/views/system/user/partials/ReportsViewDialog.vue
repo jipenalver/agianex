@@ -144,7 +144,7 @@ const viewFullImage = () => {
               </v-card>
 
               <!-- Description -->
-              <v-card variant="outlined">
+              <v-card variant="outlined" min-height="407">
                 <v-card-title class="bg-grey-lighten-4">
                   <v-icon class="me-2">mdi-text</v-icon>
                   Description
@@ -211,7 +211,7 @@ const viewFullImage = () => {
                       alt="Report Image"
                       class="mx-auto rounded cursor-pointer"
                       max-width="100%"
-                      max-height="300"
+                      max-height="285"
                       cover
                       @click="viewFullImage"
                     >
