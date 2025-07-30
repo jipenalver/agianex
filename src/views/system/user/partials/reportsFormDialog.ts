@@ -18,12 +18,14 @@ export function useReportsFormDialog(
     id: undefined as number | undefined,
     report_type: '',
     status: '',
+    priority: '',
   }
 
   type FormData = {
     id?: number | undefined
     report_type: string
     status: string
+    priority: string
   }
 
   const formData = ref<FormData>({ ...formDataDefault })
@@ -43,6 +45,8 @@ export function useReportsFormDialog(
 
   const statusOptions = ['Pending', 'In Progress', 'Resolved', 'Rejected']
 
+  const priorityOptions = ['Low', 'Medium', 'High', 'Critical']
+
   watch(
     () => props.isDialogVisible,
     () => {
@@ -51,6 +55,7 @@ export function useReportsFormDialog(
           id: props.itemData.id,
           report_type: props.itemData.type || 'General',
           status: props.itemData.status || 'Pending',
+          priority: props.itemData.priority || 'Medium',
         }
       } else {
         formData.value = { ...formDataDefault }
@@ -72,6 +77,7 @@ export function useReportsFormDialog(
         id: formData.value.id,
         report_type: formData.value.report_type,
         status: formData.value.status,
+        priority: formData.value.priority,
       }
 
       const { error } = await reportsStore.updateReport(updateData)
@@ -131,6 +137,7 @@ export function useReportsFormDialog(
     refVForm,
     reportTypeOptions,
     statusOptions,
+    priorityOptions,
     onFormSubmit,
     onFormReset,
   }

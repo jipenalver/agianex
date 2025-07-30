@@ -22,6 +22,7 @@ const {
   refVForm,
   reportTypeOptions,
   statusOptions,
+  priorityOptions,
   onFormSubmit,
   onFormReset,
 } = useReportsFormDialog(props, emit)
@@ -48,7 +49,7 @@ const {
       <v-form ref="refVForm" @submit.prevent="onFormSubmit">
         <v-card-text>
           <v-row dense>
-            <v-col cols="12" sm="6">
+            <v-col cols="12">
               <v-select
                 v-model="formData.report_type"
                 label="Report Type"
@@ -63,6 +64,16 @@ const {
                 v-model="formData.status"
                 label="Status"
                 :items="statusOptions"
+                variant="outlined"
+                :rules="[requiredValidator]"
+              ></v-select>
+            </v-col>
+
+            <v-col cols="12" sm="6">
+              <v-select
+                v-model="formData.priority"
+                label="Priority"
+                :items="priorityOptions"
                 variant="outlined"
                 :rules="[requiredValidator]"
               ></v-select>
